@@ -1,37 +1,40 @@
 # Bash példák
 
-Ebben a repository-ban Bash példakódok találhatók a Számítógépes Architektúrák egyetemi tárgy gyakorlataihoz.
+This repository contains Bash code examples for the Computer Architectures university course exercises.
 
-Fő forrásként itt megjelölném Tóth Alex anyagait, melyek ezen a linken elérhetőek:
+The original hungarian source made by Balázs Bolyki:
+
+[Source repository](https://github.com/bbalage/BashExamples/tree/master) -
+[Web page](https://bbalage.github.io/BashExamples/)
+
+As the main source, I would like to point out Alex Tóth's materials, which are available at this link:
 https://users.iit.uni-miskolc.hu/~toth130
 
-Az órák számozása nem függ össze azzal, hogy hányadik heti gyakorlaton kerül leadásra az anyag.
 
-## Órák
-- [1. óra](/BashExamples/lesson1)
-- [2. óra](/BashExamples/lesson2)
-- [3. óra](/BashExamples/lesson3)
-- [4. óra](/BashExamples/lesson4)
-- [5. óra](/BashExamples/lesson5)
-- [6. óra](/BashExamples/lesson6)
-- [7. óra](/BashExamples/lesson7)
-- [8. óra](/BashExamples/lesson8)
-- [9. óra](/BashExamples/lesson9)
+## Lessons
+- [1. lesson](/BashExamples/lesson1)
+- [2. lesson](/BashExamples/lesson2)
+- [3. lesson](/BashExamples/lesson3)
+- [4. lesson](/BashExamples/lesson4)
+- [5. lesson](/BashExamples/lesson5)
+- [6. lesson](/BashExamples/lesson6)
+- [7. lesson](/BashExamples/lesson7)
+- [8. lesson](/BashExamples/lesson8)
+- [9. lesson](/BashExamples/lesson9)
 
-## Kérdéssorok
-- [1. kérdéssor](/BashExamples/questions1)
-- [2. kérdéssor](/BashExamples/questions2)
-- [3. kérdéssor](/BashExamples/questions3)
-- [4. kérdéssor](/BashExamples/questions4)
-- [5. kérdéssor](/BashExamples/questions5)
-- [6. kérdéssor](/BashExamples/questions6)
-- [7. kérdéssor](/BashExamples/questions7)
-- [8. kérdéssor](/BashExamples/questions8)
+## Questions
+- [1. questionnaire](/BashExamples/questions1)
+- [2. questionnaire](/BashExamples/questions2)
+- [3. questionnaire](/BashExamples/questions3)
+- [4. questionnaire](/BashExamples/questions4)
+- [5. questionnaire](/BashExamples/questions5)
+- [6. questionnaire](/BashExamples/questions6)
+- [7. questionnaire](/BashExamples/questions7)
+- [8. questionnaire](/BashExamples/questions8)
 
-## Megoldókulcs
-- [Összes kérdéssor megoldókulcsa](/BashExamples/answers)
+## Solution key
+- [All questionnaire solution](/BashExamples/answers)
 
-## Segédlet
-A segédlet pdf fájlként is letölthető [itt](/BashExamples/SzGyak.pdf).
-Megjegyzés: mivel a példák elsősorban a webre lettek formázva, a sorok
-helyenként túlnyúlhatnak.
+## Help
+The help is also available as a pdf file [here](/BashExamples/SzGyak.pdf).
+Note: since the examples are primarily formatted for the web, the lines may be overlapping in places.

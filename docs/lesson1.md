@@ -1,321 +1,276 @@
 # 1. óra
 
-## Háttérismeretek
+## Background knowledge
 
-Számítógépes Architektúrák gyakorlatokon shell scriptek írásával fogunk foglalkozni Unix
-alapú operációs rendszerekben. Mit tekintünk Unix alapú rendszernek, és mik is azok a 
-shell scriptek?
+In Computer Architectures exercises, we will be dealing with writing shell scripts in Unix
+based operating systems. What is considered a Unix-based system, and what are shell scripts?
 
-Az eredeti AT&T Unix operációs rendszert még a hatvanas években fejlesztették, és sok 
-későbbi operációs rendszernek szolgált alapjául. Ezeknek egy része tényleges Unix 
-operációs rendszer (Solaris), mások pedig Unixhoz hasonló rendszerek: Mac OS X és a
-számtalan Linux disztribúció.
+The original AT&T Unix operating system was developed in the 1960s and has served as the basis for many later operating systems. Some of these are actual Unix operating systems (Solaris), while others are Unix-like systems: Mac OS X and the numerous Linux distributions.
 
-Az informatikus tanulmányok során érdemes megismerkedni legalább egy Linux 
-operációs rendszerrel közelebbről (tehát érdemes saját otthoni gépre is 
-feltelepíteni, akár virtuális gépen).
-A tanszéki gépeken ennek a jegyzetnek az írásakor Linux Mint van telepítve
-(a Mint egy Linux disztribúció). Ezen felül a következő Linux disztribúciókat
-érdemes megemlíteni:
+During your computer science studies, it is worth getting to know at least one Linux operating system more closely (so it is worth installing it on your own home computer, even on a virtual machine [WSL on Windows]). At the time of writing this note, Linux Mint is installed on the department computers (Mint is a Linux distribution). In addition, the following Linux distributions are worth mentioning:
 
-- **Ubuntu.** A Linux Mintnél mostanra elterjedtebbé váltak a
-különböző Ubuntu verziók (Ubuntu 18.04, 20.04, 22.04; a verziók a kiadásuk éve 
-szerint vannak számozva). Könnyen installálható, felhasználóbarát. Otthoni gyakorláshoz
-tökéletes.
-- **Arch Linux.** Arról híres, hogy annyira minimalista, hogy a felhasználónak
-gyakorlatilag mindent nem létfontosságú dolgot magának kell telepítenie.
-- **Manjaro Linux.** Az Arch Linuxon alapul, csak igyekeztek "felhasználóbarátabbá"
-tenni.
-- **Kali Linux.** Digitális analizálásra és sebezhetőség tesztelésre specializálódott
-Linux.
+- **Ubuntu.** The various Ubuntu versions have now become more widespread than Linux Mint (Ubuntu 18.04, 20.04, 22.04, 24.04, 26.04; versions are numbered according to the year of their release). Easy to install, user-friendly. Perfect for home practice.
+- **Arch Linux.** It is famous for being so minimalist that the user has to install practically everything non-essential themselves.
+- **Manjaro Linux.** It's based on Arch Linux, they just tried to make it more "user friendly".
+- **Kali Linux.** Specialized in digital analysis and vulnerability testing Linux.
 
-A shell kezelésének szempontjából nem lényeges, hogy melyik Linux operációs rendszert 
-használjuk. De mi az a shell?
+When it comes to managing the shell, it doesn't matter which Linux operating system you're using. But what is a shell?
 
-Az operációs rendszerek központi eleme a **kernel** (tehát mag). A *kernel* felelős
-az alapvető funkciók ellátásáért (például processzek kezelése, memória menedzselés,
-fájlrendszeri művelet; ezekről bővebben Operációs Rendszerek tárgyból). A *shell* (héj)
-egy parancsértelmező, ami a felhasználó szöveges utasításait fogja a kernel számára is 
-értelmezhető utasításokká alakítani.
+The core of operating systems is the **kernel**. The *kernel* is responsible for performing basic functions (such as process management, memory management, and file system operations; more on these in the Operating Systems topic). The *shell* is a command interpreter that converts the user's text commands into commands that the kernel can understand.
 
-Tehát a shellt mi úgy fogjuk látni, mint egy terminálban futó parancsértelmezőt. Az alább
-látható képen egy terminál látható, amiben egy shell fut.
+So we will think of the shell as a command interpreter running in a terminal. The image below shows a terminal with a shell running in it.
 
 ![terminal screenshot](img/terminal1.png)
 
-A fönt látható terminálban a **Bash** parancsértelmező fut, a parancsok pedig létrehoznak 
-két mappát; SzArGyak (Számítógépes Architektúrák Gyakorlat) és benne a lesson1 mappát, majd 
-belépnek a lesson1 mappába. Egy terminálban futhat másféle shell is, nem csak Bash
-(más shellek például: sh, zsh). A Windows operációs rendszereknek is van shellje, csak ott Powershellként és Command Line-ként találkozhatunk velük. Ezeknek más a szintaktikája, mint
-a Bash-nek. Mi a gyakorlatok keretében Bash scripteket fogunk írni.
+In the terminal shown above, the **Bash** command interpreter is running, and the commands create
+two folders; practice and the lesson1 folder inside it, and then
+enter the lesson1 folder. You can also run other shells in a terminal, not just Bash
+(other shells, for example: sh, zsh). Windows operating systems also have shells, but there we can only encounter them as Powershell and Command Line. These have a different syntax than
+Bash. We will write Bash scripts in the exercises.
 
-**Bash:** az elnevezés egy szójátékból adódik. A mostani shell szabvány az eredeti AT&T Unixhoz
-tartozó shell szabványból indul ki, amelyet Stephen Bourne dolgozott ki. Bash = **B**ourne
+**Bash:** the name is a play on words. The current shell standard is based on the original AT&T Unix shell standard, developed by Stephen Bourne. Bash = **B**ourne
 **A**gain **Sh**ell.
 
-A Linux alapú rendszereknek az egyik nagy erőssége, hogy rengeteg előre elkészített "paranccsal" rendelkeznek (kb. 700-1000). A parancsokat más néven "eszközöknek" (tool) nevezik, elvégre ezek
-többsége külső segédprogram. Néhány példát említve, hogy mire alkalmasak a parancsok:
+One of the great strengths of Linux-based systems is that they have a large number of pre-made "commands" (about 700-1000). Commands are also called "tools", after all, most of them are external utilities. Here are some examples of what the commands are suitable for:
 
-- `cd` – egy másik mappába való belépésre szolgáló parancs
-- `mkdir` – mappa létrehozására szolgáló parancs
-- `wc` – szavak, sorok és karakterek számlálására szolgáló parancs
-- `grep` – adott szöveges mintára illeszkedő sorok kiválasztása
-- stb.
+- `cd` – command to enter another directory
+- `mkdir` – command to create a directory
+- `wc` – command to count words, lines and characters
+- `grep` – select lines matching a given text pattern
+- etc.
 
-A későbbiekben feladatokon keresztül fogunk megismerkedni az ilyen parancsokkal, és ezeknek a 
-használatával. A parancsok egymással kombinálhatók, és általuk komplex feladatok hajthatók végre.
+Later on, we will learn about such commands and their usage through tasks. The commands can be combined with each other and can be used to perform complex tasks.
 
-Legelőször nyissunk egy terminált (Ctrl + Alt + T), amiben bash fut (feltehetően 
-ez a default). A további feladatokat terminálban fogjuk csinálni.
+First, open a terminal (Ctrl + Alt + T) running bash (presumably
+this is the default). We will do the rest of the tasks in the terminal.
 
-## Példák
+## Examples
 
-### 1. példa
-Hozzunk létre egy mappát, amit a gyakorlatok feladataihoz fogunk használni.
-A neve legyen `szgyak`. Ebben a mappában hozzunk létre egy másikat, aminek neve
-legyen `lesson1`. Lépjünk bele ebbe a mappába!
+### Example 1
+Let's create a folder that we will use for the exercises.
+Let's name it `practice`. In this folder, let's create another one, whose name
+will be `lesson1`. Let's go into this folder!
 
-A következő parancsokkal például ez megvalósítható:
-
+This can be achieved, for example, with the following commands:
 ```bash
-mkdir szgyak
-mkdir szgyak/lesson1
-cd szgyak/lesson1
+mkdir practice
+mkdir practice/lesson1
+cd practice/lesson1
 ```
 
-A fönti példában a következőket figyeljük meg:
-- 3 db parancsot adtunk ki, köztünk entert ütöttünk, tehát a parancsokat egyesével
-adtuk ki. A parancsokat a shell soronként értelmezte, tehát a shell egy interpreter. 
-- A parancsoknál az első szó a **parancs neve**, a további szavak az **argumentumok**.
-Általánosan egy egyszerű parancs formája:
+In the example above, we observe the following:
+- We issued 3 commands, pressing enter between them, so we issued the commands one by one
+. The shell interpreted the commands line by line, so the shell is an interpreter.
+- In the commands, the first word is **command name**, the remaining words are **arguments**.
+In general, the form of a simple command is:
 `command_name command_argument_1 command_argument_2 command_argument_n`
-Az argumentumokat szóközök választják el egymástól és a parancs nevétől. Ez némileg értelmet
-ad annak a definciónak az elméleti tananyagban, hogy
-*"a parancs fehér karakterekkel határolt szavak sora*".
-- A parancsok nevei általában valami értelmes szópárosnak a rövidítései.
-`mkdir` = make directory = mappa (vagy szakmaiasabban jegyzék) létrehozása.
-`cd` = change directory = jegyzék megváltoztatása, vagy *jegyzékváltás*.
-- A parancssorban látjuk, hogy milyen jegyzékben tartózkodunk éppen.
+The arguments are separated from each other and from the command name by spaces. This gives some sense
+to the definition in the theoretical textbook that
+*"a command is a sequence of words separated by whitespace characters*".
+- Command names are usually abbreviations of some meaningful word pair.
+`mkdir` = make directory = create a folder (or more technically, a directory).
+`cd` = change directory = change directory, or *change directory*.
+- On the command line, we can see what directory we are currently in.
 
-Ezzel kapcsolatban az is megfigyelhető, hogy a mappaneveket `/` (slash) jel választja
-el egymástól. Ez Unix alapú rendszereknél így van, míg Windowsban ez a jel `\`
+In this regard, it can also be observed that folder names are separated by a `/` (slash) symbol. This is the case on Unix-based systems, while in Windows this symbol is `\`
 (backslash).
+### Example 2
 
-### 2. példa
+Let's print out where we are in the directory system, with the absolute path!
 
-Írjuk ki, hogy hol tartózkodunk épp a mapparendszerben, az abszolút ösvénnyel!
+We can also use the `pwd` command (print working directory) for this. This will print out the current
+directory (working directory).
 
-Erre használhatjuk a `pwd` parancsot is (print working directory). Ez kiírja az aktuális
-mappát (working directory).
-
-Üssük be a parancsot!
+Type the command!
 
 ```bash
 pwd
-# valami ilyesmit kell kapnunk: /home/bbalage/szgyak/lesson1
-# A hashmark (#) kommentet jelent bashben
-# Tehát amit # után írsz, azt a parancssor nem fogja értelmezni
+# we should get something like this: /home/username/practice/lesson1
+# The hashmark (#) means a comment in bash
+# So whatever you write after the # will not be interpreted by the command line
 ```
 
-A kapott output eleje nem egyezik azzal, amit a terminálban olvashatunk. Ha megfigyeljük,
-akkor a `~` jel felcserélődött egy másik "ösvénnyel" (vagy *path*-szal). A `~` jel
-egy rövidítés a saját felhasználói gyökér mappánkra. Nálam a `~` jelentése `/home/bbalage`,
-míg más felhasználóknál ez más lesz.
+The beginning of the output you get does not match what you read in the terminal. If you look,
+the `~` character has been replaced with another "path" (or *path*). The `~` character
+is an abbreviation for your own user root folder. For me, `~` means `/home/bbalage`,
+while for other users it will be different.
 
-Szintén megemlítendő, hogy Unix rendszerben a tényleges gyökérmappát a `/` jel azonosítja.
-**Ha a gyökérből kiindulva adjuk meg a path-t, akkor a "full path-t" adjuk meg.** Ellenben,
-**ha a jelenlegi jegyzékből (working directory) indulunk ki, akkor a "relative path-t"
-(relatív ösvény).**
+The beginning of the output you get does not match what you read in the terminal. If you look,
+the `~` character has been replaced with another "path" (or *path*). The `~` character
+is an abbreviation for your own user root folder. For me, `~` means `/home/bbalage`,
+while for other users it will be different.
 
-### 3. példa
+### Example 3
 
-Lépjünk be a gyökér mappába, és írassuk ki a tartalmát!
+Let's enter the root directory and list its contents!
 
-Egy mappa tartalmának kiírására az `ls` parancsot tudjuk használni.
-Az `ls` parancsnak opcionálisan
-megadhatjuk, hogy melyik jegyzék tartalmát írja ki. Ha nem adunk meg semmit, akkor a 
-working directory tartalmát írja ki.
+We can use the `ls` command to list the contents of a directory.
+The `ls` command can optionally
+be specified as the directory to list. If nothing is specified, it lists the contents of the
+working directory.
 
 
 ```bash
 cd /
 ls
-# Ha nem akarunk belépni a mappába, csak ki akarjuk írni
-# a tartalmát, akkor # ezt az alábbi paranccsal egy lépésben
-# is megtehetjük:
+#If you don't want to enter the folder, but just want to list
+# its contents, you can do this in one step
+# with the following command:
 ls /
 ```
 
-A kép szemlélteti, hogy mit fogunk kapni:
+The picture illustrates what we will get:
 
 ![terminal screenshot](img/terminal2.png)
 
-Amiket látunk, azok rendszermappák. Csak néhányat kiemelve ezek közül:
-- `bin`: a bináris állományok, tehát a programok találhatók itt. A félévben használt 
-programok közül sokat megtalálunk ebben a mappában. Az eddigiek közül a `mkdir`, a `pwd`
-és az `ls` parancs is itt van, de a `cd` parancs nincs, ugyanis a `cd` parancs magában
-a `bash` parancsértelmezőben van implementálva (része a nyelvnek), míg a többiek külső
-segédprogramok. Ezért mondjuk azt, hogy a `mkdir`, a `pwd` és az `ls` parancsok **külső** parancsok, a `cd` (és egyéb bash-ben implementált parancsok) **belső** parancsok. Ennek
-annyi a jelentősége, hogy külső parancsokat lehet külön telepíteni, mint egyfajta
-plugineket, és előfordulhat, hogy nem minden külső parancs elérhető egy adott rendszeren
-(mert nem adtak a telepítőhöz, és a rendszergazda sem telepítette fel külön).
-- `dev`: a "devices" rövidítése, és a fizikai vagy logikai eszközök leíró fájljait
-tartalmazza (háttértár, cpu magok, terminálok, joystick input, billentyűzet, egér, stb.)
-- `root`: a rendszer felhasználó home mappája.
-- `home`: a többi felhasználó (és a saját felhasználónk) home mappáit tartalmazó mappa.
+What we see are system folders. Just to highlight a few of them:
+- `bin`: the binary files, i.e. the programs, are located here. Many of the programs used during the semester can be found in this folder. Of the above, the `mkdir`, `pwd`
+and `ls` commands are also here, but the `cd` command is not, because the `cd` command is implemented in the `bash` command interpreter itself (part of the language), while the others are external
+utilities. That is why we say that the `mkdir`, `pwd` and `ls` commands are **external** commands, and `cd` (and other commands implemented in bash) are **internal** commands. The significance of this is that external commands can be installed separately, as a kind of
+plugins, and it is possible that not all external commands are available on a given system
+(because they were not added to the installer, and the system administrator did not install them separately).
+- `dev`: short for "devices" and contains files describing physical or logical devices
+(backup storage, cpu cores, terminals, joystick input, keyboard, mouse, etc.)
+- `root`: the home folder of the system user.
+- `home`: the folder containing the home folders of other users (and our own user).
 
-### 4. példa
+### Example 4
 
-Lépjünk be a `szgyak/lesson1` mappába, és hozzunk létre egy whatever.txt nevű fájlt!
+Let's go into the `practice/lesson1` folder and create a file called whatever.txt!
 
 
 ```bash
-cd ~/szgyak/lesson1
+cd ~/practice/lesson1
 touch whatever.txt
 ```
 
-A `cd ~/szgyak` parancsot mindegy, hogy hol adjuk ki, ugyanis a ~ jel a jelenleg belépett
-felhasználó home mappájának rövid jelölése, ezért a `~/szgyak` egy full path, nem pedig 
-relative.
+The `cd ~/practice` command does not matter where we issue it, because the ~ symbol is a shorthand for the home directory of the currently logged in user, so `~/practice` is a full path, not a relative one.
 
-A `touch` parancs frissíti egy argumentumként megadott fájlt utolsó elérési és utolsó 
-változtatási dátumát (last accessed, last modified). Ha nem létezik a fájlt, amit 
-megadtunk, akkor létrehozza azt. Így a `touch` parancsot szoktuk fájlok létrehozására
-használni.
+The `touch` command updates the last accessed and last modified dates of a file given as an argument. If the file we specified does not exist, it creates it. Thus, we usually use the `touch` command to create files.
 
-### 5. példa
+### Example 5
 
-Írassuk ki a `szgyak/lesson1` mappa teljes tartalmát a benne lévő fájlok tulajdonosaival együtt!
+Let's list the entire contents of the `practice/lesson1` folder, including the owners of the files in it!
 
 ```bash
-cd ~/szgyak/lesson1
+cd ~/practice/lesson1
 ls -la
-ls -la ~/szgyak/lesson1 # ha így adjuk ki a parancsot,
-                        # akkor mindegy mi épp a working
-                        # directory
+ls -la ~/practice/lesson1 # if we issue the command like this, then it doesn't matter what the working directory
 ```
 
-Azt látjuk, hogy az `ls` parancsot némileg máshogy adtuk ki, mint eddig.
-Egy parancs működését lehet módosítani kapcsolók segítségével. Egy kapcsoló a parancs
-után jön, de az elhelyezkedése változhat parancsonként és kapcsolónként. Szinte minden 
-parancsnak vannak kapcsolói, némelyiknek egészen rengeteg, és egészen bonyolultak.
-Ahhoz, hogy megnézzük, mik egy parancs kapcsolói, és mire valók, hogyan működnek,
-vagy az internetet, vagy a **manual page-et** hívjuk segítségül.
+We see that we have issued the `ls` command a little differently than before.
+The operation of a command can be modified using switches. A switch comes after the command, but its location can vary from command to command and switch to switch. Almost every
+command has switches, some of them quite a lot, and they are quite complicated.
+To see what the switches of a command are, what they are for, and how they work,
+we can either use the Internet or the **manual page**.
 
-A következő paranccsal megnézzük az `ls` parancs *manual entry-ét*:
+The following command will show the *manual entry* of the `ls` command:
 
 ```bash
 man ls
 ```
 
-A manual page-en lehet lefelé görgetni a nyilakkal, és ki lehet lépni a q karakter lenyomásával.
-Szinte minden parancshoz lesz manual entry, és ezeket használjuk is!
+You can scroll down the manual page with the arrows and exit by pressing the q character.
+There is a manual entry for almost every command, and we use them!
 
-Próbáljuk ki az `ls` parancs kapcsolóit!
+Let's try the `ls` command switches!
 
 ```bash
-ls -l # kötőjellel adjuk meg a kapcsolókat
-ls -a # ez egy másik kapcsoló
-ls -la # ez a két előző kapcsoló kombinálva
-       # (mintha mindkettőt kiadtuk volna)
+ls -l # specify the switches with a hyphen
+ls -a # this is another switch
+ls -la # this is the two previous switches combined
+# (as if we had issued both)
 ```
-A manualból megtudhatjuk ezekről a következőket:
+The manual tells us the following:
 
-- Az `l` kapcsoló bővebb adatokat jelenít meg a fájlokról és mappákról, nem csak a nevüket.
-- Az `a` kapcsoló olyan mappákat is megjelenít, amik `.` jellel kezdődnek, vagy épp csak abból állnak. Ezek rejtett fájlok vagy mappák.
-- Az `la` kapcsoló a kettő kombinációja: bővebb adat, és ponttal kezdődő nevek is.
+- The `l` switch displays more information about files and folders, not just their names.
+- The `a` switch also displays folders that start with or consist of `.`. These are hidden files or folders.
+- The `la` switch is a combination of the two: more information and names that start with a dot.
 
-A ponttal kezdődő nevek valamilyen kisegítő dologhoz szoktak tartozni, amit nem szeretnénk,
-hogy az a felhasználó is lásson, aki csak kattintgat egy *file explorer* felületen. Ezek 
-lehetnek parancssori fájlok, konfigurációk, de gyakorlatilag bármi más is, aminek úgy 
-döntöttünk, hogy ponttal kezdődő nevet adunk.
+Names that start with a dot tend to be about some kind of extra stuff that we don't want to be visible to a user who is just clicking around in a *file explorer* interface. These can be command line files, configurations, or practically anything else that we decide to name with a dot.
 
-### 6. példa
+### Example 6
 
-Hozzunk létre egy `tmp` mappát a `szgyak/lesson1` jegyzéken belül, és írassuk ki a tartalmát!
-Mi a mappa tartalma?
+Create a `tmp` folder inside the `practice/lesson1` directory and list its contents!
+What are the contents of the folder?
 
 ```bash
-mkdir ~/szgyak/lesson1/tmp
-# ha a working directory a ~/szgyak/lesson1 akkor elég ennyi is:
+mkdir ~/practice/lesson1/tmp
+# if the working directory is ~/practice/lesson1 then this is enough:
 # mkdir tmp
-ls -a ~/szgyak/lesson1/tmp # full path
-ls -a tmp # relative path; függ a working directory-tól
-          # (tehát attól, hogy "hol vagyunk")
+ls -a ~/practice/lesson1/tmp # full path
+ls -a tmp # relative path; depends on the working directory
+          # (i.e. "where we are")
 ```
 
-Azt látjuk. hogy még az üres jegyzéknek is van két bejegyzése: `.` és `..`
-Az egy pontból álló bejegyzés magára a jegyzékre mutat, míg a két pontból álló bejegyzés 
-a szülő jegyzékre (amiben az aktuális jegyzék van). Tehát a következő paranccsal visszalépünk
-a `szgyak` jegyzékbe:
+We see that even the empty list has two entries: `.` and `..`
+The entry with a dot points to the list itself, while the entry with two dots points to the parent list (which contains the current list). So, we can go back to the `practice` list with the following command:
 
 ```bash
 cd ..
 ```
 
-Az ilyen visszalépő directory neveket lehet láncolni is. Az alábbival kettőt lépünk "vissza":
+Such backward directory names can also be chained. The following will "back" two layers:
 
 ```bash
 cd ../..
 ```
 
-És így tovább. Az alábbival nem csináltunk semmit, ugyanis `.` arra a mappára utal, amiben
-található.
+And so on. We didn't do anything with the following, because `.` refers to the folder it is in.
 
 ```bash
 cd .
 ```
 
-### 7. példa
-Töröljük a `tmp` directory-t!
+### Example 7
+Delete the `tmp` directory!
 
 ```bash
-cd ~/szgyak/lesson1
+cd ~/practice/lesson1
 rmdir tmp
-# ha kihagyjuk a cd-t, akkor természetesen megtehetjük ezt is:
-# rmdir ~/szgyak/lesson1/tmp
-# ugyanaz történik, csak egyik esetben full path, másik esetben
-# relative path a hivatkozás típusa
+# if we omit the cd, we can of course do this:
+# rmdir ~/practice/lesson1/tmp
+# the same thing happens, only in one case it is a full path, in the other case
+# relative path is the type of link
 ```
 
-`rmdir` = remove directory; kellően beszédes név, hogy ne kelljen magyarázni.
+`rmdir` = remove directory; a name that is sufficiently eloquent to need no explanation.
 
-### 8. példa
-Töröljük a `whatever.txt` fájlt!
+### Example 8
+Delete the file `whatever.txt`!
 
 ```bash
-rm ~/szgyak/lesson1/whatever.txt
+rm ~/practice/lesson1/whatever.txt
 ```
 
-`rm` = remove; szintén beszédes. Annyit viszont érdemes megemlíteni, hogy ez a parancs nem 
-a kukába rakja a fájlokat, hanem ténylegesen törli őket. Nem fogjuk tudni a kukából
-visszaszerezni azt, amitől így szabadultunk meg.
+`rm` = remove; is also descriptive. It is worth noting, however, that this command does not
+put the files in the trash, but actually deletes them. We will not be able to recover what we got rid of from the trash.
 
-### 9. példa
-Hozzuk létre a következő mappaszerkezetet a `~/szgyak/lesson1` mappán belül (minden fájlt
-hagyjunk üresen):
+### Example 9
+Create the following folder structure inside the `~/practice/lesson1` folder (leave all files
+empty):
 
 ```
 |
-|-src (mappa)
- |- main.c (fájl)
- |- util.h (fájl)
- |- util.c (fájl)
-|-assets (mappa)
- |-textures (mappa)
-  |-xy.png (fájl)
-  |-wz.png (fájl)
-  |-readme.txt (fájl)
- |-maps (mappa)
-|-build (mappa)
- |-release (mappa)
- |-debug (mappa)
+|-src (directory)
+ |- main.c (file)
+ |- util.h (file)
+ |- util.c (file)
+|-assets (directory)
+ |-textures (directory)
+  |-xy.png (file)
+  |-wz.png (file)
+  |-readme.txt (file)
+ |-maps (directory)
+|-build (directory)
+ |-release (directory)
+ |-debug (directory)
 ```
 
 A jegyzékeket könnyen létrehozhatjuk az alábbi módon:
 
 ```bash
-cd ~/szgyak/lesson1
+cd ~/practice/lesson1
 mkdir src
 mkdir assets
 mkdir assets/textures
@@ -325,22 +280,21 @@ mkdir build/release
 mkdir build/debug
 ```
 
-Viszont ezzel nem tanultunk semmi újat, és kettővel több parancsot adtunk ki, mint szükséges!
+However, we didn't learn anything new, and we issued two more commands than necessary!
 
-Ha elolvassuk a `mkdir` parancs manual entry-ét (`man mkdir`), akkor megtudjuk, hogy
-van neki egy `-p` kapcsolója, ami a szülő mappa létrehozására is utasít. Például az 
-alábbi parancs alapból hibával elbukik:
+If we read the manual entry for the `mkdir` command (`man mkdir`), we will learn that it has a `-p` switch, which also tells it to create the parent directory. For example, the
+command below will fail with an error by default:
 
 ```bash
 mkdir build/release
 ```
 
-Ez azért van, mert nincs `build` mappa, amiben létre lehet hozni a `release` mappát.
-A `-p` kapcsoló annyiban módosítja a működést, hogy az ehhez hasonló esetekben a 
-szülő mappát is létrehozza a parancs (`-p` mint *parent*). Így kiadva a parancsokat:
+This is because there is no `build` folder in which to create the `release` folder.
+The `-p` switch modifies the behavior in such a way that in cases like this, the
+parent folder is also created by the command (`-p` as *parent*). By issuing the commands like this:
 
 ```bash
-cd ~/szgyak/lesson1
+cd ~/practice/lesson1
 mkdir src
 mkdir -p assets/textures
 mkdir assets/maps
@@ -348,7 +302,7 @@ mkdir -p build/release
 mkdir build/debug
 ```
 
-A fájlokat egyszerűen hozzuk létre a `touch` paranccsal!
+We create files simply with the `touch` command!
 
 ```bash
 touch src/main.c
@@ -359,34 +313,32 @@ touch assets/textures/wz.png
 touch assets/textures/readme.txt
 ```
 
-### 10. példa
-Írassuk ki a mappák tartalmát, karaktergrafikusan rendezett formában!
+### Example 10 
+Let's list the contents of the folders, in a character graphically arranged form!
 
 ```bash
 tree
-# igen, ennyi a parancs. Adjuk ki a lesson1 mappában!
+# yes, that's the command. Let's issue it in the lesson1 folder!
 ```
 
-A `tree` parancs nem minden rendszerre van telepítve, viszont pont azt csinálja, amire
-szükségünk van. Ellenőrizzük, hogy a kapott mappaszerkezet olyan-e, mint az alább
-látható screenshoton. Ha nem olyan, akkor valamit elrontottunk.
+The `tree` command is not installed on all systems, but it does exactly what we need. Let's check if the resulting folder structure is like the screenshot below. If it is not, then we have messed something up.
 
 ![terminal screenshot](img/terminal3.png)
 
-### 11. példa
-Töröljük az összes png fájlt a `textures` mappában!
+### Example 11
+Delete all png files in the `textures` folder!
 
 ```bash
 rm assets/textures/*.png
 ```
 
-A csillag minden szövegre illeszkedni fog (a reguláris kifejezésekről később majd bővebben).
-Ellenőrizzük a `tree` paranccsal, hogy a png fájlok (és csak azok) eltűntek-e. Erre az 
-ellenőrzésre használhatjuk az `ls assets/textures` parancsot is (amelyik szimpatikus).
+The asterisk will match any text (more on regular expressions later).
+Use the `tree` command to check if the png files (and only those) are gone.
+You can also use the `ls assets/textures` command (whichever is more convenient) to do this.
 
-### 12. példa
-Hozzunk létre egy `utils` mappát az `src` mappán belül, és helyezzük át bele az `util.c` és 
-az `util.h` fájlokat!
+### Example 12
+Create a `utils` folder inside the `src` folder and move the `util.c` and
+`util.h` files into it!
 
 ```bash
 mkdir src/utils
@@ -394,79 +346,76 @@ mv src/util.h src/utils/util.h
 mv src/util.c src/utils/util.c
 ```
 
-`mv` = move. A működése meglehetősen egyszerű. Első argumentuma annak a fájlnak vagy mappának
-az elérési útja (path), amit át akarunk helyezni, második argumentuma pedig az új helyen 
-érvényes elérési út.
+`mv` = move. Its operation is quite simple. The first argument of that file or folder
+is the path we want to move, and its second argument is the new location
+valid path.
 
-Tehát az a fájl, amit eddig `src/util.h` ösvényen értünk el, azt a parancs kiadása után
-`src/utils/util.h` elérési úton fogjuk elérni.
+So, the file that we have accessed so far on the `src/util.h' path, after issuing the command
+We will access it via `src/utils/util.h`.
 
-### 13. példa
-Nevezzük át a `textures` mappában található `readme.txt` fájlt `readme_sprites.txt` fájlra.
+### Example 13
+Rename the `readme.txt` file in the `textures` folder to `readme_sprites.txt`.
 
 ```bash
 mv assets/textures/readme.txt assets/textures/readme_sprites.txt
 ```
 
-Átnevezésre az `mv` parancsot szoktuk használni a föntiek szerint.
+We usually use the `mv` command for renaming, as mentioned above.
 
-### 14. példa
-Másoljuk át a `readme_sprites.txt` fájlt a `maps` mappába `readme_maps.txt` néven!
+### Example 14
+Copy the `readme_sprites.txt` file to the `maps` folder as `readme_maps.txt`!
 
 ```bash
 cp assets/textures/readme_sprites.txt assets/maps/readme_maps.txt
 ```
 
-`cp` = copy. A működése ugyanolyan, mint az `mv` parancsé, csak itt másolunk, nem áthelyezünk.
+`cp` = copy. Its operation is the same as the `mv` command, only here we copy, not move.
 
-### 15. példa
-Töröljük a `maps` és a `build` mappát!
+### Example 15
+Delete the `maps` and `build` folders!
 
 ```bash
 rm -r assets/maps
 rm -r build
 ```
 
-Az `-r` kapcsoló jelentése *recursive*, hatása pedig az, hogy amennyiben az `rm` parancsnak
-egy mappát adunk meg, akkor rekurzívan törli a mappa teljes tartalmát (és minden a mappában
-lévő mappa tartalmát), mielőtt törli magát a mappát.
+The `-r` switch means *recursive*, and its effect is that if you give the `rm` command a folder, it will recursively delete the entire contents of the folder (and the contents of all folders in the folder) before deleting the folder itself.
 
-## Összefoglalás
+## Summary
 
-A következő parancsokat tanultuk:
-- `cd` megváltoztatja a working directory-t (konyhanyelven belép egy másik mappába).
-- `pwd` kiírja a jelenlegi working directory-t (konyhanyelven azt a directory-t, amiben vagyunk).
-- `ls` kiírja egy directory tartalmát.
-- `mkdir` létrehoz egy új directory-t.
-- `touch` frissíti egy fájl legutóbbi elérési dátumát és legutóbbi módosítási dátumát, és
-ha még a fájl nem létezik, akkor létrehozza azt.
-- `rmdir` directory törlése.
-- `rm` fájlok, mappák törlése.
-- `tree` karaktergrafikusan kirajzolja a mappaszerkezetet.
-- `cp` fájlok, mappák másolása.
-- `mv` fájlok, mappák elérési útjának módosítása (tehát áthelyezése és/vagy átnevezése).
-- `man` manual entry megnyitása egy parancshoz.
+We learned the following commands:
+- `cd` changes the working directory (in cooking language, it enters another folder).
+- `pwd` displays the current working directory (in cooking language, the directory we are in).
+- `ls` displays the contents of a directory.
+- `mkdir` creates a new directory.
+- `touch` updates the last access date and last modification date of a file, and
+if the file does not exist, it creates it.
+- `rmdir` deletes a directory.
+- `rm` deletes files and folders.
+- `tree` draws the folder structure graphically.
+- `cp` copies files and folders.
+- `mv` changes the path of files and folders (i.e. moves and/or renames them).
+- Open `man` manual entry for a command.
 
-## Feladatok
+## Assignments
 
-Önálló gyakorló feladatok.
+Independent practice assignments.
 
-### 1. feladat
+### Assignment 1
 
-Induljunk felderítő útra a fájlrendszerben! Nézzünk bele más felhasználók home mappáiba!
-Keressük meg a legvalószínűbb helyet, ahova az értékes beadandóikat pakolják majd!
-Ha a fájljaik mindenki számára olvashatóak, akkor meg is nézhetjük őket. Ha írhatók, akkor 
-törölhetjük is őket. Tanulság: ügyeljünk a jogosultságokra (következő órán megnézzük őket).
+Let's go on a reconnaissance trip in the file system! Let's look into other users' home folders!
+Find the most likely place where they will put their valuable submissions!
+If their files are readable by everyone, then we can look at them. If they are writable, then we can
+delete them. Lesson: pay attention to permissions (we will look at them in the next lesson).
 
-### 2. feladat
+### Assignment 2
 
-Módosítsuk az `util.h` utolsó változtatási dátumát, de csak a változtatási dátumát!
-Figyeljünk arra, hogy a parancs alapból mind az utolsó elérési, mind az utolsó módosítási
-dátumot módosítja! A feladat megoldásához olvassuk ki a megfelelő kapcsolót a `touch`
-parancs manual entry-éből (önálló utánanézés).
+Change the last modification date of `util.h`, but only the modification date!
+Note that the command modifies both the last access and the last modification dates by default! To solve this assignment, read the appropriate switch from the manual entry of the `touch`
+command (independent investigation).
 
-### 3. feladat
-Hozzunk létre egy `include` mappát a `lesson1` mappán belül. Másoljuk bele az `util.h`
-fájlt, de adjuk ki úgy a parancsot, hogy csak akkor történjen másolás, ha a célmappában lévő
-azonos nevű fájl nem létezik, vagy elavult! (csak akkor másolj, ha szükséges) Keressük ki a 
-megfelelő kapcsolót a `cp` parancs manual entry-éből!
+### Task 3
+Create an `include` folder inside the `lesson1` folder. Copy the `util.h`
+file into it, but issue the command so that it will only be copied if the file with the same name in the target folder
+does not exist or is outdated! (copy only if necessary) Find the
+appropriate switch from the `cp` command manual entry!

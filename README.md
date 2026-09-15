@@ -1,5 +1,5 @@
-# Bash példák
+# Bash Examples
 
-Ebben a repository-ban Bash példakódok találhatók a Számítógépes Architektúrák egyetemi tárgy gyakorlataihoz.
+This repository contains Bash example code for exercises in the Computer Architectures university subject.
 
-A jelenleg elérhető gyakorlatok listája [itt](https://bbalage.github.io/BashExamples/) található.
+List of currently available exercises [here](https://imiklos.github.io/BashExamples/).
