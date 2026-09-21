@@ -1,9 +1,7 @@
-3. óra
+Lesson 3
 ===
 
-Ezen az órán új parancsokat fogunk tanulni, és megtanuljuk kombinálni őket. Mielőtt
-azonban belefogunk a parancsok kombinálásába, tanuljunk meg terminálban fájlokat
-szerkeszteni!
+In this lesson, we will learn new commands and how to combine them. Before we start combining commands, let's learn how to edit files in the terminal!
 
 ## nano (terminálos szövegszerkesztő)
 A `nano` egyike a tömérdek terminálos szövegszerkeztőknek, amik elérhetőek szoktak lenni egy 

@@ -1,118 +1,113 @@
-# 2. óra
+# Lesson 2
 
-**Előkészület:** Hozzunk létre egy külön mappát ennek a gyakorlatnak a feladataihoz,
-és lépjünk bele (a mappába)! Hozzunk létre benne tetszőleges text fájlokat.
+**Preparation:** Let's create a separate folder for the tasks of this exercise,
+and go into it! Create any text files in it.
 
 ```bash
-cd szgyak
+cd practice #if created last week, else first run -> mkdir practice
 mkdir lesson2
 cd lesson2
 touch 1.txt
 touch 2.txt
 ```
 
-Ezek után elkezdhetjük az új anyagot!
+After that, we can start the new material!
 
-## Jogosultságok
+## Permissions
 
-Az előző órán megtanultuk, hogy hogyan lehet terminálban navigálni a fájlrendszerbe.
-Nem néztük azonban meg, hogy milyen jogosultságok vannak, hogyan lehet ezeket megtekinteni,
-hogyan tárolja őket a Linux, és hogyan tudjuk őket módosítani.
+In the previous lesson, we learned how to navigate the file system in a terminal.
+However, we didn't look at what permissions there are, how to view them,
+how Linux stores them, and how to change them.
 
-A jogosultságok megtekintése meglehetősen egyszerű, és ennek a módját már tanultuk. Adjuk ki
-a következő parancsot a `lesson2` mappában.
+Viewing permissions is quite simple, and we've already learned how to do it. Let's execute
+the following command in the `lesson2` folder.
 
 ```bash
 ls -l
 ```
 
-Eddig nem néztük meg jobban, hogy mit is ír ki pontosan az `ls` parancs az `-l` kapcsolóval
-kombinálva. Az alábbi képen látható egy lehetséges output:
+So far, we haven't looked closely at what exactly the `ls` command prints when combined with the `-l` switch. The image below shows a possible output:
 
 ![terminal screenshot](img/terminal2_1.png)
 
-Ilyenkor a következő oszlopok jelennek meg.
-1. Jogosultságok. Rövidesen tisztázzuk az értelmezését.
-2. Tulajdonos. Általában egyezik azzal a felhasználóval, aki létrehozta a fájlt.
-3. Csoport. Rövidesen erre is kitérünk bővebben.
-4. Méret. Bájtokban megadva látjuk.
-5. Utolsó módosítás ideje.
-6. Név.
+In this case, the following columns appear.
+1. Permissions. We will clarify its interpretation shortly.
+2. Hard link (For standard files, this value is typically 1, while for directories, it starts at 2 and increases by 1 for every immediate subdirectory they contain due to internal parent-child references)
+3. Owner. Usually the same as the user who created the file.
+4. Group. We will discuss this in more detail shortly.
+5. Size. We see it given in bytes.
+6. Last modification time.
+7. Name.
 
-Térjünk rá ezekből a jogosultságok oszlopra!
+Let's move on to the permissions column!
 
-### Jogosultságok egyszerű fájlokra
-Unix alapú rendszeren háromféle jogosultságot különböztetünk meg:
-- olvasási (**r**ead),
-- írási (**w**rite),
-- futtatási (e**x**ecute).
+### Permissions for simple files
+On a Unix-based system, we distinguish three types of permissions:
+- read (**r**ead),
+- write (**w**rite),
+- execute (**e**x**ecute).
 
-A jogosultságokat minden elemnél háromféle felhasználóra értelmezzük. Ezek a felhasználók:
-- a tulajdonos,
-- a tulajdonosi csoportban lévő felhasználók,
-- mindenki más.
+The permissions are interpreted for three types of users for each element. These users are:
+- the owner,
+- users in the owner's group,
+- everyone else.
 
-Ennek megfelelően egy fájlra 3x3 jog létezik, tehát 9. Tekintsük az alábbi képernyőképet:
+Accordingly, there are 3x3 rights for a file, so 9. Consider the screenshot below:
 
 ![terminal screenshot](img/terminal2_2.png)
 
-A `runnable` nevű fájlt mindenkinek joga van írni, olvasni és futtatni. Ezt jelöli, hogy 
-látható az `rwxrwxrwx` a fájl előtt. Ezzel szemben a két text fájlt csak a tulajdonosnak és 
-a tulajdonosi csoporttagoknak tartozóknak van joguk írni, ellenben mindenkinek joga van olvasni.
-Futtatni senkinek sincs joga a text fájlokat (nem is lenne értelme futtatni egy text fájlt).
+The file `runnable` has the right to be written, read and executed by everyone. This is indicated by the `rwxrwxrwx` in front of the file. In contrast, the two text files are only writable by the owner and
+members of the owner's group, but everyone has the right to read them.
+No one has the right to execute the text files (there would be no point in executing a text file).
 
-Látható, hogy azok a jogok, amik nincsenek megadva '-' karakterrel (kötőjel) vannak jelölve.
-Ami meg van adva, annak a megfelelő karaktere kiírásra kerül. Az első hármas `rwx` csoport a
-tulajdonos jogait jelöli, a második a tulajdonos csoportjában lévőket, a harmadik mindenki mást.
+You can see that the rights that are not given are marked with a '-' character (dash).
+The corresponding character is printed for those that are given. The first triple `rwx` group represents the rights of the
+owner, the second group represents those in the owner's group, and the third group represents everyone else.
 
-Megjegyzendő, hogy a fájl törléséhez is írási jog kell.
+Note that you also need write permission to delete the file.
 
-### Jogosultságok számokként
-Ahhoz, hogy meg tudjuk változtatni ezeket a jogosultságokat, először nézzük meg, hogy rendszer
-hogyan reprezentálja őket!
+### Permissions as numbers
+To be able to change these permissions, let's first look at how the system
+represents them!
 
-A jogosultságokat az Unix rendszerekben hagyományosan számokkal jelölik. A számok képzése a 
-következő:
+Permissions are traditionally represented by numbers in Unix systems. The numbers are formed as follows:
 - `r` = 4
 - `w` = 2
 - `x` = 1
 
-A számok láthatóan kettő hatványai (második, első és nulladik hatványa). Ha ezeknek az összegét 
-képezzük, akkor megkapjuk, hogy milyen jogok élnek a fájlra. Például, ha az `1.txt` fálj jogaiból 
-indulunk ki, akkor a tulajdonos jogait a 6-os szám jelöli, mert `r + w` joga van, ami számokkal
-`4 + 2 = 6`. Ezeket a számokat is ismételjük, tehát az adott fájl jogai 664, ugyanis a tulajdonos
-és a csoporttagoknak jogát a hatos szám jelöli, míg a többiekét a 4-es, mert ők csak
-olvashatják a fájlt.
+The numbers are apparently powers of two (second, first and zeroth powers). If we sum them, we get the rights that apply to the file. For example, if we start from the rights of the file `1.txt`, then the owner's rights are indicated by the number 6, because he has `r + w` rights, which in numbers
+`4 + 2 = 6`. We repeat these numbers, so the rights of the given file are 664, because the rights of the owner
+and group members are indicated by the number six, while the rights of the others are indicated by the number 4, because they can only
+read the file.
 
-Néhány példa kombináció:
-- 755 = `rwxr-xr-x`: A tulajdonos mindent megtehet a fájllal, de a többiek nem írhatják.
-- 640 = `rw-r-----`: A tulajdonos írhat és olvashat, a csoportba tartozók csak olvashatnak,
-mindenki más nem tehet semmit a fájllal.
-- 711 = `rwx--x--x`: A tulajdonos mindent megtehet, de mindenki egyéb csak futtathatja a fájlt.
+Some example combinations:
+- 755 = `rwxr-xr-x`: The owner can do everything with the file, but everyone else can't write to it.
+- 640 = `rw-r-----`: The owner can write and read, the group can only read,
+everyone else can't do anything with the file.
+- 711 = `rwx--x--x`: The owner can do everything with the file, but everyone else can only execute the file.
 
-A tulajdonosnak nem kell több jogosultsággal rendelkeznie, mint mindenki másnak, de így logikus.
+The owner doesn't have to have more permissions than everyone else, but it makes sense.
 
-Most, hogy tudjuk a jelöléseket, nézzük a változtatásokat!
+Now that we know the notations, let's look at the changes!
 
-### Jogosultságok megváltoztatása
-A jogosultságok megváltoztatására a `chmod` parancsot használhatjuk. A parancs első paramétere 
-az új jogosultságok számokkal, a második a fájl, amire meg akarjuk változtatni a jogosultságokat.
-Például:
+### Changing permissions
+To change permissions, you can use the `chmod` command. The first parameter of the command is
+the new permissions in numbers, the second is the file whose permissions you want to change.
+For example:
 
 ```bash
 chmod 640 1.txt
-# ezután nézzük meg:
+# let's see then:
 ls -l
 ```
 
-A fönti parancs után az 1.txt jogosultságai a következők lesznek: `rw-r-----`. Természetesen a 
-parancsnak megadható bármilyen háromjegyű szám, amelyben nem szerepel 8-as vagy 9-es számjegy, de 
-persze némelyik logikailag nincs sok értelme. Például miért adnánk meg 507-et? Ezzel a fájllal 
-bárki bármit tehet, de a tulajdonosa nem írhatja, és a csoport is teljesen le van tiltva
-róla. Ha átrendezzük, akkor már több értelme van: 750. Ettől függetlenül az 507 is megadható,
-nem tiltja semmi.
+After the above command, the permissions of 1.txt will be `rw-r-----`. Of course, any three-digit number that does not contain the digits 8 or 9 can be given to the
+command, but
+of course some of them do not make much sense logically. For example, why would we give 507?
+Anyone can do anything with this file, but the owner cannot write to it, and the group is completely banned from it. If we rearrange it, it makes more sense: 750. Regardless, 507 can also be given,
+nothing prevents it.
 
-A chmod parancsnak adhatunk a következőképpen is paramétert:
+We can also give parameters to the chmod command as follows:
 
 ```bash
 touch script.sh
@@ -120,74 +115,66 @@ touch script.sh
 chmod +x script.sh
 ```
 
-A fönti parancsoknál létrehoztunk egy `script.sh` nevű fájlt. Alapértelmezetten a `script.sh`
-fájlon sincs futtatási jog, viszont mi később tudni fogjuk, hogy az `.sh` kiterjesztésű fájlokban
-shell scripteket szoktunk tárolni, amelyeket esélyesen futtatni szeretnénk. Ehhez előbb írnunk is 
-kell a fájlba egy programot (amelyet a fönti példában nem tettünk meg, csak kommentben), viszont 
-jogunk attól még nincs a futtatásra. A `chmod +x script.sh` parancs mindenkinek megadja a futtatási
-jogot a fájlhoz. Ha ennél finomabban akarjuk megadni, akkor vissza kell térnünk a számos jelöléshez.
+In the above commands, we created a file called `script.sh`. By default, the `script.sh` file does not have execute permission, but we will later learn that we usually store shell scripts in files with the `.sh` extension that we want to run. To do this, we first need to write a program to the file (which we did not do in the above example, only in a comment), but we still do not have the right to run it. The `chmod +x script.sh` command gives everyone execute permission to the file. If we want to specify it more finely, we need to go back to the numerous notations.
 
-### Mappa jogosultságok
-Mappák esetében is értelmezettek a read-write-execute jogok, de mást jelentenek, mint fájlok esetén.
-- **read:** Aki rendelkezik olvasási joggal, az listázhatja a mappa bejegyzéseit (a benne lévő fájlokat
-és mappákat).
-- **write:** Aki rendelkezik ezzel a joggal, az módosíthatja a mappa tartalmát.
-- **execute:** Aki rendelkezik ezzel a joggal, az beléphet a mappába. Megjegyzendő, hogy ha nem léphetünk
-be a mappába, akkor nem tudunk módosítani benne és nem tudjuk megfelelően listázni a bejegyzéseit sem.
-Tehát a read és write jog az execute jog nélkül nem sok hasznot jelent nekünk.
+### Folder permissions
+The read-write-execute rights are also interpreted for folders, but they mean something different than for files.
+- **read:** Anyone with read rights can list the entries in the folder (the files
+and folders in it).
+- **write:** Anyone with this right can modify the contents of the folder.
+- **execute:** Anyone with this right can enter the folder. It should be noted that if we cannot enter
+the folder, we cannot modify it and we cannot properly list its entries either.
+So, read and write rights without execute rights are of little use to us.
 
-## Csoportok
-Minden fájlnak van egy tulajdonosi csoportja, amelyre a fönt olvasottaknak megfelelően kitüntetett
-jogosultságok vonatkozhatnak. Az `ls -l` parancs kilistázza a fájlokat a tulajdonossal és a
-csoporttal együtt.
+## Groups
+Each file has an owner group, which can be granted the permissions specified above. The `ls -l` command lists files with their owner and group.
 
-A következő módon megnézhetjük, hogy az adott user melyik csoportokba tartozik:
+We can see which groups a given user belongs to in the following way:
 
 ```bash
 groups username
-# a username nevű felhasználó csoportjai kiírásra kerülnek
+# the groups of the user named username are listed
 ```
 
-Minden fájlnak egy tulajdonosi csoportja van, de egy felhasználó több felhasználói csoportban lehet. 
-Az Unixban vannak parancsok különböző csoportkezelési műveletekre. Mivel ez a tárgy nem az *Unix Rendszergazda*
-tárgy, ezért ezekbe a parancsokba nem fogunk itt mélyebben belemenni. Az alábbi parancsokat felsoroljuk, de
-legfeljebb minimális szükségünk lesz rájuk:
-- `useradd` új felhasználót ad a rendszerhez.
-- `groupadd` új csoportot ad a rendszerhez.
-- `usermod -a -G groupname username` egy meglévő usert (username) egy meglévő csoporthoz (groupname) hozzáad.
+Every file has an owner group, but a user can be in multiple user groups.
+Unix has commands for various group management operations. Since this is not the *Unix Administrator*
+subject, we will not go into these commands in depth here. The following commands are listed, but
+we will need them at most:
+- `useradd` adds a new user to the system.
+- `groupadd` adds a new group to the system.
+- `usermod -a -G groupname username` adds an existing user (username) to an existing group (groupname).
 
-A föntiek inkább rendszergazdai feladatok, de ritkán személyes gépen is hasznosak lehetnek kényelmi okokból.
+The above are more of an administrative task, but they can be useful on a personal computer for convenience reasons.
 
-Lényegesen gyakrabban kell használni a `chown` parancsot, amely egy fájl tulajdonjogának megváltoztatására
-szolgál. Egyszerre lehet használni a tulajdonos felhasználó és a tulajdonos csoport megváltoztatására.
-Ha csak a tulajdonost akarjuk megváltoztatni, akkor a következőképpen tehetjük:
+Much more often you will need to use the `chown` command, which is used to change the ownership of a file.
+It can be used to change the owning user and the owning group at the same time.
+If you only want to change the owner, you can do this as follows:
 
 ```bash
 chown newusername filename
 ```
 
-Amennyiben a tulajdonosi csoportot is meg akarjuk változtatni, akkor az alábbi módon adjuk ki a parancsot:
+If we also want to change the ownership group, we issue the command as follows:
 
 ```bash
 chown username:groupname filename
 ```
 
-Megjegyzendő, hogy a `chown` parancshoz szükséges a rendszergazdai jogosultság, így ezt
-nem tudjuk kipróbálni, csak otthoni gépen, ahol rendelkezünk a rendszergazda jelszavával. 
+Note that the `chown` command requires administrator privileges, so we can't try this except on a home machine where we have the administrator password. 
 
-## Példák
-Az alábbi példán keresztül gyakoroljuk a jogosultságok beállítását!
+## Examples
+We will practice setting permissions through the following example!
 
-### 1. példa
+### Example 1
 
-Hozzunk létre a `lesson2` mappán belül egy `example` mappát! Ezen a mappán belül hozzuk 
-létre a megfelelő fájlokat a megfelelő jogosultságokkal,
-hogy az `ls -l` parancs a következő kimenetet generálja (a tulajdonosokkal ne törődjünk,
-mérettel, elérési, módosítási idővel ne törődjünk): 
+Create a folder `example` inside the `lesson2` folder! Inside this folder,
+create the appropriate files with the appropriate permissions,
+so that the `ls -l` command generates the following output (don't worry about the owners,
+don't worry about the size, access time, modification time):
 
 ![terminal screenshot](img/terminal2_3.png)
 
-A következő kóddal mindez kivitelezhető:
+This can be done with the following code:
 
 ```bash
 # Create folder and cd into it
@@ -213,22 +200,45 @@ chmod 777 runnable
 chmod 775 script.sh
 ```
 
-## Összefoglalás
-Az alábbi parancsokat tanultuk (csak az elsőt, a `chmod`-ot használtuk érdemben):
-- `chmod` módosítja a fájlokra adott jogosultságokat
-- `chown` módosítja egy fájl tulajdonosát (rendszergazdai jog kell a kiadásához)
-- `groups` kiírja egy felhasználó mely csoportokba tartozik
-- `useradd` új felhasználót ad a rendszerhez
-- `groupadd` új csoportot ad a rendszerhez
+## Summary
+We learned the following commands (we only used the first one, `chmod`):
+- `chmod` changes the permissions on files
+- `chown` changes the owner of a file (requires administrator rights to release it)
+- `groups` lists the groups a user belongs to
+- `useradd` adds a new user to the system
+- `groupadd` adds a new group to the system
 
-## Feladatok
-Önálló gyakorló feladatok.
+## Tasks
+Independent practice tasks.
 
-### 1. feladat
-Hozzon létre egy mappát a `szgyak/lesson2` mappában `task` néven! A mappában belül
-hozza létre a megfelelő mappákat és fájlokat a megfelelő jogosultságokkal, hogy a 
-mappán belül kiadott `ls -la` parancs az alábbi screenshoton látható eredményt
-hozza! (ignorálja a fájloknak és mappáknak a jogosultsághoz és névhez nem kötődő
-tulajdonságait, tehát módosítási dátumot, tulajdonost, stb.)
+### Task 1
+Create a folder in the `practice/lesson2` folder called `task`! Inside the folder
+create the appropriate folders and files with the appropriate permissions so that the `ls -la` command issued inside the folder
+returns the result shown in the screenshot below!
+(ignore the properties of the files and folders that are not related to permissions and names, i.e. modification date, owner, etc.)
 
 ![terminal screenshot](img/terminal2_4.png)
+
+<details>
+<summary>Solution</summary>
+<hr>
+
+```bash
+# Create folders
+mkdir avenged_sevenfolder homework
+
+# Create files (even hidden files)
+touch 1.md 2.md dummy.js filer_episode.mkv .hidden_file runnable script.sh
+
+# Roles
+chmod 664 1.md
+chmod 600 2.md
+chmod 755 avenged_sevenfolder
+chmod 666 dummy.js
+chmod 660 filer_episode.mkv
+chmod 644 .hidden_file
+chmod 770 homework
+chmod 755 runnable
+chmod 710 script.sh
+```
+</details>

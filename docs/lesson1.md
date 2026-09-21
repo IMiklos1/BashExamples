@@ -1,4 +1,4 @@
-# 1. óra
+# Lesson 1
 
 ## Background knowledge
 
