@@ -1,238 +1,225 @@
-# 4. óra
+# Lesson 4
 
-Ezen az órán kicsit bővebben megnézzük a "csővezetékelést" Bashben,
-és a reguláris kifejezésekbe is betekintünk.
+In this lesson, we will take a closer look at "piping" in Bash
+and get an introduction to regular expressions.
 
-Készítsük elő a munkánkat azzal, hogy létrehozunk egy `lesson4`
-nevű nappát, benne pedig a `people.csv` fájlt az előző óráról ismert
-tartalommal (legegyszerűbb tehát kopizni).
+Let us prepare our work by creating a folder named `lesson4`,
+with the `people.csv` file from the previous lesson inside it
+(the easiest way is to copy it).
 
 ```bash
 mkdir szgyak/lesson4
 cd szgyak/lesson4
-cp ../lesson3/people.csv ./ # bemásolja a fájlt az eredeti
-                            # néven ebbe a directoryba 
+cp ../lesson3/people.csv ./ # copies the file into this directory
+                            # under its original name
 ```
 
-## Csővezeték operátor láncolása
-Hasonlóan a `&&` és `||` operátorokhoz, a `|` (pipeline) operátor is 
-láncolható. Általánosan:
+## Chaining pipe operators
+Similarly to the `&&` and `||` operators, the `|` (pipe) operator can also
+be chained. In general:
 
 ```bash
-parancs1 | parancs2 | parancs3
+command1 | command2 | command3
 ```
 
-Ha a `people.csv` fájlból ki akarjuk olvasni azokat az embereket,
-akiknek 70-es a telefonszáma és az 1900-as években születtek,
-akkor azt megtehetjük például így:
+If we want to read from `people.csv` the people whose phone number starts
+with 70 and who were born in the 1900s, we can do so as follows:
 
 ```bash
 cat people.csv | grep ";0670" | grep ";19"
 ```
 
-Egy ábrával szemléltetve ilyenkor a következő történik:
+The following happens in this case, illustrated by a diagram:
 
 ![filter_commands](img/filter_commands.png)
 
-Tehát a `grep` parancs "megszűrte" a bemenetét, mielőtt a kimenetére
-engedte. Azokat a parancsokat, amelyek így viselkednek, "filter"-eknek
-(vagy szűrő parancsoknak) nevezzük. **Filter tehát az a parancs, ami a
-bemenetről olvas, csinál valamit, majd kiírja az eredményt.** Ezekből néhány:
-- `head` az első x sort írja ki a kimenetre.
-- `tail` az utolsó x sort írja ki a kimenetre.
-- `sort` rendezi a bemenetet, és kiírja a kimenetre.
-- `grep` ismerjük.
-- `wc` megszámolja a szavak, karakterek, sorok számát, és kiírja a kimenetre.
-- `rev` soronként fordítva írja ki a bemenetet.
-- `uniq` rendezett adatokban vizsgál számosságot és egyediséget (például megnézi,
-hogy egy sor hányszor szerepel).
-- `cut` oszlopokat vág ki az adatból.
-- `tr` karaktereket cserél ki az adatban.
+The `grep` command therefore filtered its input before passing it to its output.
+Commands that behave this way are called "filters". **A filter is a command that
+reads from input, does something, and then prints the result.** Some examples are:
+- `head` prints the first x lines to the output.
+- `tail` prints the last x lines to the output.
+- `sort` sorts the input and prints it to the output.
+- `grep`, which we already know.
+- `wc` counts words, characters, and lines, and prints the result to the output.
+- `rev` prints the input in reverse, line by line.
+- `uniq` examines counts and uniqueness in sorted data (for example, it checks how
+many times a line occurs).
+- `cut` extracts columns from the data.
+- `tr` replaces characters in the data.
 
-Nézzünk meg néhányat példákon keresztül!
+Let us look at some of them through examples!
 
-### 1. példa
-Írjuk ki a `people.csv` fájl utolsó három sorát!
+### Example 1
+Print the last three lines of the `people.csv` file!
 
 ```bash
 cat people.csv | tail --lines=3
-# A következő parancs ugyanezt csinálja
-# (csak nem kell kiírni, hogy '--lines')
+# The following command does the same thing
+# (we do not need to write '--lines')
 cat people.csv | tail -3
 ```
 
-A `tail` parancs ugyanúgy szűrőként működik, mint a `grep`, csak más műveletet
-hajt végre. A parancs neve után megadott számnak megfelelő mennyiségű sort írja
-ki a fájl végéről.
+The `tail` command works as a filter like `grep`, but performs a different operation.
+It prints the number of lines specified after the command name from the end of the file.
 
-### 2. példa
-Írjuk ki a `people.csv` fájl első három sorát, fejléccel együtt!
+### Example 2
+Print the first three lines of the `people.csv` file, including the header!
 
 ```bash
 cat people.csv | head --lines=3
 ```
 
-A `head` ugyanúgy működik, mint a `tail`, csak nem az utolsó, hanem az első sorokat
-írja ki.
+`head` works like `tail`, except that it prints the first lines rather than the last ones.
 
-### 3. példa
-Írjuk ki a `people.csv` fájl utolsó olyan sorát, ahol a telefonszám
-harmincas!
+### Example 3
+Print the last line in the `people.csv` file where the phone number starts with 30!
 
 ```bash
 cat people.csv | grep ";0630" | tail -1
-# Vagy:
+# Or:
 cat people.csv | grep ";0630" | tail --lines=1
 ```
 
-A fönti parancs az eddigiek alapján könnyen érthető, ha tudjuk, hogy a csővezetéket
-sok parancson keresztül is láncolhatjuk.
+The command above is easy to understand based on what we have learned so far,
+once we know that pipes can be chained across many commands.
 
-### 4. példa
-Írjuk ki a `people.csv` fájl összes sorát, kivéve az utolsó ötöt!
+### Example 4
+Print all lines of the `people.csv` file except the last five!
 
 ```bash
 cat people.csv | head --lines=-4
-# Vagy a következő is ugyanezt csinálja
+# The following does the same thing
 cat people.csv | head
 ```
 
-Ha a `--lines` után negatív számot adunk meg, akkor nem az első *n* darabot írja ki,
-hanem az utolsó *n* darabot **nem** írja ki. Hasonló a `tail` működése is, egy kis 
-csavarral, amit meglátunk a következő példában.
+If we specify a negative number after `--lines`, it does not print the first *n* items;
+instead, it **does not** print the last *n* items. `tail` works similarly, with a small
+twist that we will see in the next example.
 
-### 5. példa
-Írjuk ki a `people.csv` fájl első három sorát, fejléc nélkül!
+### Example 5
+Print the first three lines of the `people.csv` file without the header!
 
 ```bash
 cat people.csv | tail --lines=+2 | head --lines=3
-# Vagy rövidebben:
+# Or more briefly:
 cat people.csv | tail +2 | head -3
 ```
 
-Ebben az esetben a `tail` az *n*-edik sornál kezdi a kiírást, ahol a számot `+` jellel
-adjuk meg (nem minusszal, mint a `head`-nél).
+In this case, `tail` starts printing at the *n*th line, where the number is specified
+with a `+` sign (not a minus sign, as with `head`).
 
-### 6. példa
-Írjuk ki a `/dev` mappa első 10 fájlját vagy directory-ját, akkor 
-is, ha azok rejtettek! Ne jelenjenek meg a `.` és `..` speciális
-jegyzékek!
+### Example 6
+Print the first 10 files or directories in `/dev`, even if they are hidden!
+The special `.` and `..` entries should not be displayed!
 
 ```bash
 ls -la /dev | tail +4 | head -10
 ```
 
-Itt az `ls -la` parancs első három sorát vágtuk le (ami a *total number of disk 
-blocks* sor és a két speciális directory sora), majd a maradékból meghagytuk az első
-10-et.
+Here, we removed the first three lines of the `ls -la` command (the *total number of disk
+blocks* line and the two special directory lines), then kept the first 10 of the remainder.
 
-Ez a példa közelebb áll ahhoz, amire gyakorlatban is használjuk a Bash nyelvet.
-A csv fájlon könnyű megmutatni ezeknek a parancsoknak a működését, de a gyakorlatban
-nem csak fájlok tartalmán, hanem parancsok kimenetén is dolgozunk. Ezek akkor szoktak
-előjönni, mikor valami command line (parancssori) eszközt használunk, ami listáz
-nekünk valamit. Ilyeneket jelenleg nem igazán ismerünk, és nem is fogunk, amíg 
-valami valós vagy egyetemi projektben nem jönnek szembe velünk.
+This example is closer to how we use Bash in practice. It is easy to demonstrate
+these commands on a CSV file, but in practice we work not only with file contents,
+but also with command output. This usually comes up when we use a command-line tool
+that lists something for us. We do not really know such tools yet, and will not learn
+them until we encounter them in a real or university project.
 
-Ettől függetlenül megemlíteném, hogy például a `docker` eszközt. Ez virtuális 
-gépeket kezel, és megfelelő kapcsolókkal kiírja nekünk a jelenleg működő virtuális 
-gépeket, a nevükkel és az azonosítójukkal. Ekkor a `grep` parancs jól jön nekünk,
-hogy a sok virtuális gép közül megtaláljuk a megfelelő nevűt. Ha nagyon command line
-mágusok vagyunk, akkor a név mellé az id-t is kiszedhetjük bash segítségével, és
-akár a gépet is leállíthatjuk. Ez bajlódós keresés, kijelölés, kopizás és beillesztés
-lenne, de ha csinálunk rá magunknak egy scriptet, akkor egyetlen parancsból megoldható.
+Nevertheless, let us mention the `docker` tool as an example. It manages virtual
+machines and, with the appropriate options, prints the currently running virtual
+machines with their names and identifiers. The `grep` command is useful for finding
+the correctly named machine among many virtual machines. If we are real command-line
+mages, we can also extract the ID next to the name using Bash and even stop the machine.
+This would involve tedious searching, selecting, copying, and pasting, but if we write
+a script for it, it can be done with a single command.
 
-**A bash egyik nagy előnye abban van, hogy gyakran ismételt command line parancsokat 
-automatizálhatunk.**
+**One of Bash's major advantages is that we can automate frequently repeated command-line
+commands.**
 
-### 7. példa
-Írjuk ki a `/dev` mappa utolsó 5 diskjét (most tekintsük
-azokat a fájlokat disknek, amiknek a tulajdonos csoportja disk)!
+### Example 7
+Print the last 5 disks in the `/dev` folder (for now, consider files whose owner group
+is `disk` to be disks)!
 
 ```bash
 ls -la /dev | grep " disk " | tail -5
 ```
 
-### 8. példa
-Írjuk ki a `people.csv` fájlból csak az emberek neveit (a fejléc nélkül)!
+### Example 8
+Print only the people's names from the `people.csv` file (without the header)!
 
 ```bash
 cat people.csv | tail +2 | cut --field=1 --delimiter=';'
-# Vagy ugyanez rövidebben
+# Or the same thing more briefly
 cat people.csv | tail +2 | cut -f 1 -d ';'
 ```
 
-A fönti parancs utolsó eleme magyarázatra szorul, tehát a `cut` parancs.
-Ez egy oszlopokból álló szövegből kiolvassa a megfelelő oszlopokat. Egy 
-oszlop lehet bájt vagy karakter méretű is, de nekünk most *mezőkre* van
-szükségünk. A `--fields=1` kapcsoló megmondja, hogy hányadik mezőt
-szeretnénk kiolvasni a bemeneti szövegből. A mezőket viszont a fájlon belül
-el kell választani valamivel, amit általában *delimiter* néven ismerünk
-a szaknyelvben. A `--delimiter=';'` kapcsoló megmondja, hogy milyen karakterek
-adják az oszlophatárokat a bemeneti szövegben (esetünkben a pontosvessző).
+The last element of the command above, the `cut` command, requires some explanation.
+It reads the appropriate columns from text consisting of columns. A column can be
+specified by bytes or characters, but we need *fields* here. The `--fields=1` option
+tells it which field to read from the input text. Within the file, however, fields
+must be separated by something, which is generally called a *delimiter*.
+The `--delimiter=';'` option specifies which character separates the columns in the
+input text (in this case, the semicolon).
 
-### 9. példa
-Írjuk ki a `people.csv` fájlból csak a telefonszámokat, és azokból is csak az 
-első 20-ast!
+### Example 9
+Print only the phone numbers from the `people.csv` file, and only the first one beginning with 20!
 
 ```bash
 cat people.csv | grep ";0620" | cut -f 3 -d ';' | head -1
 ```
 
-### 10. példa
-Írjuk ki a `people.csv` fájlból az emberek neveit betűrendben (csak a neveket).
+### Example 10
+Print the people's names from the `people.csv` file in alphabetical order (names only).
 
 ```bash
 cat people.csv | tail +2 | cut -f 1 -d ';' | sort
 ```
 
-### 11. példa 
-Írjuk ki a `people.csv` fájlból a születési hónapokat (csak a hónapokat)!
+### Example 11
+Print the birth months from the `people.csv` file (months only)!
 
 ```bash
 cat people.csv | cut -f 2 -d ';' | cut -f 2 -d '.'
 ```
 
-Ezen a ponton kezdhetjük érezni, hogy elég messzire lehet menni ezeknek
-a parancsoknak a kombinálásával. Sok parancs van, saját kapcsolókkal rendelkeznek,
-és az eddigiekhez hasonlóan működnek. További parancsok megismerése és bonyolítás 
-helyett térjünk át a reguláris kifejezésekre, amelyek szintén hasznosak lesznek
-nekünk!
+At this point, we can begin to see that we can go quite far by combining these
+commands. There are many commands with their own options, and they work similarly
+to those we have seen so far. Instead of learning and combining more commands,
+let us move on to regular expressions, which will also be useful to us!
 
-## Reguláris kifejezések
-Az egyetemen egyszer a következőt mondta nekem az egyik tanár: "Az informatikában a két
-legnehezebb dolog a caching és a reguláris kifejezések."
+## Regular expressions
+One of my teachers once told me at university: "The two hardest things in computer
+science are caching and regular expressions."
 
-A reguláris kifejezéseket a *text matching* feladatához használják. **Egy reguláris
-kifejezés egy minta, aminek ismeretében egy "reguláris kifejezés motor" 
-egyértelműen meg tudja állapítani, hogy egy adott szövegre illeszkedik-e a kifejezés.**
-Példa alapján érthetőbb: az alábbiak reguláris kifejezések, mellettük pedig azok, amikre
-illeszkednek:
+Regular expressions are used for *text matching*. **A regular expression is a pattern
+that a "regular expression engine" can use to unambiguously determine whether the
+expression matches a given piece of text.** It is easier to understand with examples:
+the following are regular expressions, followed by what they match:
 
-- `[0-9]{3}`: minden három hosszúságú számsorra illeszkedik.
-- `^[A-Z][a-z]+`: minden nagybetűvel kezdődő szóra illeszkedik.
+- `[0-9]{3}`: matches every sequence of three digits.
+- `^[A-Z][a-z]+`: matches every word beginning with an uppercase letter.
 
-A továbbiakban megismerjük néhány építőelemét a reguláris kifejezéseknek.
-Egy rövid összefoglalót mutatok be ebben a jegyzetben, de ennél
-sokkal bőségesebb a téma, és az [internet](https://www.regular-expressions.info/)
-rengeteg információt tartalmaz vele kapcsolatban. A reguláris kifejezéseket széles körben
-használják, például egy weboldal formjának validálásakor (megmondják vele, hogy a 
-szöveges mező milyen felépítésű szöveget tartalmazhat), vagy épp keresésekkor 
-(megmondják vele, hogy milyen felépítésű szöveget keresnek). Hasznos, de bonyolult téma,
-és nem fogunk nagyon elmélyülni benne.
+Next, we will learn about some building blocks of regular expressions.
+This document provides a short summary, but the topic is much broader, and the
+[Internet](https://www.regular-expressions.info/) contains a great deal of information
+about it. Regular expressions are widely used, for example, when validating a web form
+(to specify what structure of text a field may contain) or when searching (to specify
+what structure of text to look for). It is a useful but complicated topic, and we will
+not explore it in great depth.
 
-Továbbra is a `people.csv` fájl tartalmán fogunk gyakorolni, de javaslom, hogy most az
-egyszer hagyjuk itt egy időre a terminált, mert csak véget nem érő szenvedést fog okozni
-nekünk.
+We will continue practicing on the contents of `people.csv`, but I suggest that we
+leave the terminal for a while at this point, because it will only cause us endless suffering.
 
-Egy utolsó dologra azonban még rávilágítanék a Bash parancsokkal kapcsolatban:
-láttuk, hogy az órán vegyesen használtam a kétféle idézőjelet, az egyszerest
-(`'`) és a kétszerest (`"`). Ennek gyakorlati jelentősége is lesz innentől, ugyanis az
-egyszeres idézőjel **csak szöveget** tartalmaz, míg a kétszeres **tartalmazhat értelmezendő
-változókat**. Ezt a jövő órán bővebben látni fogjuk, egyelőre azonban elégedjünk meg
-azzal, hogy **a reguláris kifejezéseket érdemes egyszeres idézőjelek közé írni**!
+There is one more thing I would like to point out about Bash commands:
+we have seen that I used both types of quotation marks during the lesson, single quotes
+(`'`) and double quotes (`"`). This will have practical significance from now on,
+because single quotes contain **only text**, while double quotes **can contain variables
+that need to be interpreted**. We will examine this in more detail in the next lesson;
+for now, it is enough to remember that **regular expressions should preferably be
+written inside single quotes**!
 
-Adjunk új tartalmat a `people.csv` fájlnak, hogy bonyolultabb legyen a feladat, és indokolt
-legyen a reguláris kifejezések használata! Az új tartalom:
+Give the `people.csv` file new contents to make the task more complex and justify
+using regular expressions! The new contents are:
 
 ```
 Name;Birthdate;Phone;Email;Skill
@@ -250,138 +237,132 @@ Larry Lipstick;1988.07.22;+36206547382;baby@gmail.com;Hairstyling
 Inigo Montoya;1977.04.11;+367065682;pr3pare@gmail.to;Swordfighting
 ```
 
-A https://regex101.com/ weboldalon van lehetőség interaktívan és viszonylag vizuálisan 
-kipróbálni a reguláris kifejezéseket. Az alábbi screenshot illusztrálja, hogy mit kell 
-látnunk a weboldalon. Másoljuk be a `people.csv` tartalmát oda, ahol a képen is látható
-(a legnagyobb textboxba középen).
+The https://regex101.com/ website lets us try regular expressions interactively and
+in a relatively visual way. The following screenshot illustrates what we should see
+on the website. Copy the contents of `people.csv` into the location shown in the image
+(the largest text box in the center).
 
 ![regex](img/regex_screenshot.png)
 
-A jobb jobb felső sarokban angol nyelvű magyarázatok láthatók a beírt kifejezések 
-jelentésére. Középen felülre tudunk beírni reguláris kifejezéseket, amikkel keresünk
-a szövegben.
-A jobb alsó sarokban található pár rövid emlékeztető, hogy mik a leggyakoribb reguláris 
-kifejezések. Néhányat felsorolok itt, aztán példákon keresztül nézzük meg őket!
+The top-right corner contains explanations in English of the meaning of the expressions
+we enter. We can enter regular expressions near the top center to search the text.
+The bottom-right corner contains a few short reminders about the most common regular
+expressions. I will list some of them here, and then we will look at them through examples!
 
-- A `.` bármely 1 db karakterre illeszkedik.
-- A `?` karakter megmondja, hogy az előző karakter 1 vagy 0 alkalommal fordulhat elő
-(tehát `blabla?` kifejezés illeszkedik `blabla` vagy `blabl` szövegekre).
-- A `*` karakter megmondja, hogy az előző karakter akárhányszor előfordulhat, akár 0-szor
-is (tehát `blabla*` kifejezés illeszkedik `blabla`, `blablaaaaaaaa` vagy `blabl` szövegekre
-is).
-- A `+` jel az előző karakter 1 vagy többszöri ismétlődését jelenti (tehát `blabla+`
-kifejezés illeszkedik `blabla` vagy `blablaaaaa` szövegekre is, de **nem** illeszkedik 
-`blabl` szövegre).
-- A `[]` szögletes zárójeleken belül megadott karakterekre (például `[abc]`) vagy 
-karakterintervallumokra (például `[a-z]`) illeszkedik, de csak egyre.
-- A `[^]` szögletes zárójeleken belül megadott karakterekre **nem** illeszkedik
-(az előző negálása), csak bármelyik másik egyetlen karakterre.
-- A `{,}` kapcsos zárójeleken belül számszerűen megadható, hogy az előző karakterekből
-mennyi forduljon elő. Például `{2,4}` azt jelenti, hogy minimum 2, de maximum 4 karakterre 
-fog illeszkedni. `{N,}` jel esetén N vagy több karakterre illeszkedik. `{N}` esetén 
-pontosan N karakterre illeszkedik. Megjegyzendő, hogy a `?`, `*`, `+` karakterek 
-megadhatók kapcsos zárójel intervallumokkal is, a következőképpen: `{0,1}` = `?`, `{0,}` = `*`,
-`{1,}` = `+`.
-- A `^` karakter a sor elejére illeszkedik.
-- A `$` jel a sor végére illeszkedik.
+- The `.` matches any single character.
+- The `?` character specifies that the preceding character may occur once or zero times
+(so the expression `blabla?` matches `blabla` or `blabl`).
+- The `*` character specifies that the preceding character may occur any number of times,
+including zero (so `blabla*` matches `blabla`, `blablaaaaaaaa`, or `blabl`).
+- The `+` sign means one or more repetitions of the preceding character (so `blabla+`
+matches `blabla` or `blablaaaaa`, but **does not** match `blabl`).
+- `[]` matches one of the characters listed inside the square brackets (for example,
+`[abc]`) or one character from a range (for example, `[a-z]`).
+- `[^]` does **not** match the characters listed inside the square brackets (the negation
+of the previous form); it matches any other single character.
+- `{,}` specifies numerically how many times the preceding character may occur. For example,
+`{2,4}` means at least 2 and at most 4 occurrences. `{N,}` matches N or more characters.
+`{N}` matches exactly N characters. Note that `?`, `*`, and `+` can also be specified
+with brace intervals: `{0,1}` = `?`, `{0,}` = `*`, and `{1,}` = `+`.
+- The `^` character matches the beginning of a line.
+- The `$` sign matches the end of a line.
 
-Ezek a leggyakoribb használt reguláris kifejezés építőelemek. Ebben a kurzusban nem lesz másra
-szükség.
+These are the most commonly used building blocks of regular expressions. We will not need
+anything else in this course.
 
-A reguláris kifejezések a `grep` paranccsal fogjuk használni. Ahhoz, hogy a `grep` parancs 
-reguláris kifejezéseket értelmezzen, meg kell neki adni az `-E` kapcsolót (mint `Expression`),
-majd a reguláris kifejezést javasoltan egyszeres idézőjelek között. Mielőtt beadjuk a
-`grep` parancsnak a kifejezést, győződjünk meg róla a fönti weboldalon, hogy helyesen adtuk 
-meg a kifejezésünket!
+We will use regular expressions with the `grep` command. To make `grep` interpret regular
+expressions, we must provide the `-E` option (as in `Expression`), followed preferably by
+the regular expression inside single quotes. Before giving the expression to `grep`, make
+sure on the website above that the expression is correct!
 
-### 12. példa
-Írjuk ki a `people.csv` fájlból azokat az embereket, akiknek R-rel kezdődik a keresztneve!
+### Example 12
+Print the people from the `people.csv` file whose first name starts with R!
 
 ```bash
 cat people.csv | grep -E '^R'
 ```
 
-A `^` jel a sor elejét jelöli ki nekünk, tehát arra kerestünk rá, hogy melyik sor kezdődik R-rel.
+The `^` sign denotes the beginning of a line, so we searched for lines that begin with R.
 
-### 13. példa
-Írjuk ki a `people.csv` fájlból azokat az embereket, akiknek R-rel kezdődik a vezetékneve!
+### Example 13
+Print the people from the `people.csv` file whose last name starts with R!
 
 ```bash
 cat people.csv | grep -E '^[a-zA-Z ]+R[a-z]+;'
 ```
 
-A fönti kifejezés illeszkedik minden olyan nagy R betűre, ami az első pontosvessző előtti
-szó elején van, és csak betűk és szóközök előzik meg.
+The expression above matches every uppercase R that is at the beginning of a word before
+the first semicolon, with only letters and spaces preceding it.
 
-### 14. példa
-Írjuk ki a `people.csv` fájlból azokat az embereket, akiknek legalább két skillje van!
+### Example 14
+Print the people from the `people.csv` file who have at least two skills!
 
 ```bash
 cat people.csv | grep -E ',[a-zA-Z ]+$'
 ```
 
-Arra kerestünk rá, hogy legyen vessző a sor végi szavak előtt.
+We searched for a comma before the words at the end of the line.
 
-### 15. példa
-Írjuk ki a `people.csv` fájlból azokat az embereket, akiknek három neve van!
+### Example 15
+Print the people from the `people.csv` file who have three names!
 
 ```bash
 cat people.csv | grep -E '^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+;'
 ```
 
-### 16. példa
-Írjuk ki a `people.csv` fájlból azokat az embereket, akiknek valid az email címe!
-(valid email cím legyen most az, aminek a felhasználónevében csak betű, szám és `.` 
-karakter van, amiket `@` követ, majd kisbetűkből álló csoportnév, amitől `.` választja
-el a záró, minimum 2, maximum 4 karakteres jelölőt; a felhasználónév minimum 3, maximum 100,
-a csoportnév minimum 3, maximum 20 karakter legyen)
+### Example 16
+Print the people from the `people.csv` file whose email address is valid!
+(For now, a valid email address is one whose username contains only letters, digits, and
+`.` characters, followed by `@` and a lowercase group name, separated by `.` from a final
+label of at least 2 and at most 4 characters; the username must be between 3 and 100
+characters, and the group name between 3 and 20 characters.)
 
 ```bash
 cat people.csv | grep -E ';[0-zA-Z0-9.]{3,100}@[a-z]{3,20}\.[a-z]{2,4};'
 ```
 
-A fönti szövegben felhívnám a figyelmet a *backslash* karakter (`\`) használatára a `.`
-karakter előtt. A `.` karakternek alapból jelentése van, ezért ha azt egyszerű karakterként
-akarjuk használni, be kell írnunk elé egy *backslash* karaktert. Ugyanez igaz a többi speciális
-karakterre is (`?` `+` `{` `}` `\` stb.)
+A text above draws attention to using the *backslash* character (`\`) before the `.`
+character. The `.` character has a special meaning by default, so if we want to use it as
+a literal character, we must write a *backslash* before it. The same applies to the other
+special characters as well (`?`, `+`, `{`, `}`, `\`, etc.).
 
-## Megjegyzések
-A korábbiakban a `cat` parancsot használtuk egy fájl kilistázására. Ez olyan szempontból
-jó volt, hogy megtanultuk a parancsot és a csővezetékelést is szemléltette. A fönti példákban
-viszont valójában elhagyható.
-A `grep` parancsnak utolsó paraméterébe beírható a fájl neve, amiben keresni akarunk.
-Ugyanez igaz a többi megtekintett szűrő parancsra is. Például valid a következő:
+## Notes
+Earlier, we used the `cat` command to list the contents of a file. This was useful because
+we learned the command and demonstrated piping, but it can actually be omitted in the
+examples above.
+The file name to search can be provided as the last parameter of the `grep` command.
+The same is true for the other filter commands we have seen. For example, the following
+is valid:
 
 ```bash
 head -1 people.csv
 ```
 
-Ezzel a módszerrel viszont nem lehet például az `ls` parancs tartalmán dolgozni
-(bár a későbbiekben fogunk ciklust írni rá, hogy végigiteráljunk egy directory tartalmán).
-Tehát a következő nem fog működni:
+However, this method cannot be used to process the output of the `ls` command, for example
+(although later we will write a loop to iterate over the contents of a directory).
+Therefore, the following will not work:
 
 ```bash
 head -1 ls
 ```
 
-## Feladatok
+## Exercises
 
-Tekintsünk néhány önálló gyakorló feladatot! A `people.csv` fájl tartalma az új,
-frissített tartalom legyen!
+Let us look at some independent practice exercises! The contents of the `people.csv` file
+should be the new, updated contents.
 
-### 1. feladat
-Írjuk ki a nevük szerint betűrendben azokat, akiknek egyetlen Skillje van!
+### Exercise 1
+Print, in alphabetical order by name, the people who have only one skill!
 
-### 2. feladat
-Írjuk ki azoknak a nevét és a telefonszámát, akiknek az egyik neve o-val végződik!
+### Exercise 2
+Print the names and phone numbers of the people whose one of their names ends in o!
 
-### 3. feladat
-Írjuk ki azoknak az embereknek a keresztnevét, akiknek a telefonszáma +36-tal kezdődik
-és valid (9 szám követi a +36-ot, és vagy 20-as, vagy 30-as, vagy 70-es)!
+### Exercise 3
+Print the first names of the people whose phone number starts with +36 and is valid
+(9 digits follow +36, and the number starts with 20, 30, or 70)!
 
-### 4. feladat
-Írjuk ki azoknak az embereknek a vezetéknevét, akiknek a telefonszáma 06-tal kezdődik
-és valid!
+### Exercise 4
+Print the last names of the people whose phone number starts with 06 and is valid!
 
-### 5. feladat
-Írjuk ki azoknak az embereknek a nevét, akik páros napon születtek!
+### Exercise 5
+Print the names of the people who were born on an even-numbered day!

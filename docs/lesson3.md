@@ -1,20 +1,21 @@
 Lesson 3
 ===
 
-In this lesson, we will learn new commands and how to combine them. Before we start combining commands, let's learn how to edit files in the terminal!
+In this lesson, we will learn new commands and how to combine them. Before we start
+combining commands, let's learn how to edit files in the terminal!
 
-## nano (terminálos szövegszerkesztő)
-A `nano` egyike a tömérdek terminálos szövegszerkeztőknek, amik elérhetőek szoktak lenni egy 
-Unix rendszerre (ismertek még: emacs, vim). A nano egy olyan szövegszerkesztő, ami
-teljesen a terminálban működik, és nem kell külön ablakot nyitnia, hogy használható legyen.
-Az egér is szinte teljesen haszontalan.
+## nano (terminal text editor)
+`nano` is one of the many terminal text editors that are commonly available on a
+Unix system (others include emacs and vim). Nano is a text editor that works
+entirely in the terminal, so no separate window is needed to use it.
+The mouse is almost completely useless as well.
 
-A `nano` segítségével tudunk fájlokat szerkeszteni anélkül, hogy új ablakot kéne nyitnunk.
-Ez abban az esetben jó, mikor csak pár sort be akarunk írni egy fájlba, vagy 
-rendszergazdaként akarjuk szerkeszteni az adott fájlt.
+With `nano`, we can edit files without opening a new window.
+This is useful when we only want to write a few lines to a file, or when we want
+to edit a file as an administrator.
 
-Nyissunk egy terminált, és hozzunk létre az `szgyak` mappán belül egy `lesson3` mappát!
-Lépjünk be ebbe a mappába, és nyissunk meg egy `tmp.txt` nevű fájlt a `nano` segítségével!
+Open a terminal and create a `lesson3` folder inside the `szgyak` folder!
+Enter this folder and open a file named `tmp.txt` with `nano`!
 
 ```bash
 mkdir szgyak/lesson3
@@ -22,250 +23,241 @@ cd szgyak/lesson3
 nano tmp.txt # command name and file path
 ```
 
-Írjunk bele tetszőleges szöveget a fájlba! Például: "Blablabla; blablabla". A fájlt 
-el tudjuk menteni a Ctrl + O billentyűkombinációval (O, mint Out). Ezt követően ki tudunk lépni
-a Ctrl + X lenyomásával (X, mint eXit).
+Write any text into the file! For example: "Blablabla; blablabla". We can save the file
+with Ctrl + O (O, as in write out). After that, we can exit by pressing
+Ctrl + X (X, as in exit).
 
-Ha ezután kiadjuk az `ls` parancsot, akkor látjuk, hogy a fájl létrejött. Ha a tartalmát is 
-meg akarjuk nézni, akkor vagy megint megnyitjuk a `nano` szövegszerkesztővel, vagy pedig
-csak kiíratjuk a tartalmát a terminálra. Ezt a `cat` parancs segítségével tudjuk megtenni.
+If we run the `ls` command afterwards, we can see that the file was created. If we also
+want to view its contents, we can either open it again with the `nano` text editor or
+simply print its contents to the terminal. We can do this with the `cat` command.
 
 ```bash
-cat tmp.txt # kiírja a fájl tartalmát a terminálra
+cat tmp.txt # prints the contents of the file to the terminal
 ```
 
-## Parancsok kombinálása
-Az Unix parancsok azt az elvet követik, hogy egy parancs **egyetlen** lényegi feladatot
-hajtson végre. Ennek megfelelően, ha komplexebb feladatot akarunk végrehajtani, akkor 
-valószínűleg nem fogunk olyan parancsot találni, ami megoldja nekünk azt. Helyette össze 
-kell kombinálni meglévő parancsokat valamilyen módon. A parancsok kombinálására első körben
-az alábbi módszereket tekintsük:
+## Combining commands
+Unix commands follow the principle that one command should perform **one** essential task.
+Therefore, if we want to perform a more complex task, we probably will not find a single
+command that solves it for us. Instead, we have to combine existing commands in some way.
+For combining commands, let us first consider the following methods:
 
-- `parancs1 && parancs2` -> ha parancs1 sikeresen végrehajtódott, akkor hajtódjon végre
-parancs2 is.
-- `parancs1 || parancs2` -> ha parancs1 elbukott, akkor hajtódjon végre parancs2
-- `parancs1 | parancs2` -> parancs1 kimenetét parancs2 bemenetére irányítja
-- `parancs1; parancs2` -> parancs1 után végrehajtja parancs2-t. Ez gyakorlatilag nem
-kombinálás, mert csak kiadtunk egymás után két parancsot, annyi különbséggel, hogy 2 
-sor helyett 1 sorban tettük meg.
+- `command1 && command2` -> if command 1 succeeds, command 2 is executed as well
+- `command1 || command2` -> if command 1 fails, command 2 is executed
+- `command1 | command2` -> redirects the output of command 1 to the input of command 2
+- `command1; command2` -> executes command 2 after command 1. This is not really
+combining commands, because we simply ran two commands one after the other, except that
+we did it on one line instead of two.
 
-Ezeken felül lehet még a parancs outputját valamilyen egyéb "folyamra" (stream) is irányítani.
-Ez akkor hasznos például, ha fájlba szeretnénk írni, vagy csak "kukázni" akarjuk az 
-outputot. A következő "irányításokat" tekintsük meg:
+In addition, we can redirect the command's output to another "stream".
+This is useful, for example, when we want to write to a file or simply "throw away"
+the output. Let us look at the following redirections:
 
-- `parancs > streamname` -> a parancs outputját a `streamname` nevű streamre irányítja.
-Tipikus eset, hogy `streamname` egy fájl; ekkor az output felülírja a fájl tartalmát
-(az eredeti tartalom törlődik).
-- `parancs >> streamname` -> ugyanaz, mint az előző, csak a parancs outputja hozzáfűződik
-a streamhez, nem pedig felülírja azt. Ez fájl esetén a látványos, ugyanis ilyenkor a fájl
-eredeti tartalma nem törlődik, mint az előző esetben.
+- `command > streamname` -> redirects the command's output to the stream named `streamname`.
+A typical case is when `streamname` is a file; then the output overwrites the contents
+of the file (the original contents are deleted).
+- `command >> streamname` -> the same as the previous operator, except that the command's
+output is appended to the stream instead of overwriting it. This is especially noticeable
+with files, because the original contents are not deleted as they are with the previous operator.
 
-Vegyük észre, hogy alapból is egy streamre írunk, a *standard output* streamre (*stdout*, 1-es
-azonosító). Ismert a *standard input* stream is (*stdin*, 0-s azonosító), továbbá a *standard
-error* stream (*stderr*, 2-es azonosító). Ezekkel majd azután foglalkozunk, hogy megtanultunk
-pár hasznos parancsot.
+Notice that by default we also write to a stream, the *standard output* stream (*stdout*,
+identifier 1). The *standard input* stream (*stdin*, identifier 0) is also familiar, as is
+the *standard error* stream (*stderr*, identifier 2). We will discuss these after learning
+a few useful commands.
 
-Az eddigiek szemléltetéséhez tanuljuk meg az `echo` parancsot (mint visszhang)!
-Ez mindössze annyit csinál, hogy kiírja, amit írunk neki:
+To demonstrate the above, let us learn the `echo` command (like an echo)!
+It simply prints whatever we give it:
 
 ```bash
 echo "Hello World!"
-# kiírja, hogy Hello World! és rak egy új sor karaktert a végére
+# prints Hello World! and adds a newline character at the end
 ```
 
-Tekintsük meg példákon keresztül a parancsok kombinálását!
+Let us look at combining commands through examples!
 
-## Példák
+## Examples
 
-### 1. példa
-Próbáljunk meg belépni egy `tmp` nevű jegyzékbe, és ha nem sikerül, akkor írjunk ki hibát!
+### Example 1
+Try to enter a directory named `tmp`, and print an error if it fails!
 
 ```bash
 cd tmp || echo "Error"
 ```
 
-A fönti példában az első parancs a `cd tmp`. A két vonal jelentése, hogy ha az első
-parancs elbukik, akkor hajtódjon végre a második parancs. A második parancs `echo "Error"`
-Tehát ha `cd tmp` elbukik, akkor `echo "Error"` végrehajtódik, egyébként nem.
+In the example above, the first command is `cd tmp`. The two vertical bars mean that if
+the first command fails, the second command is executed. The second command is `echo "Error"`.
+Therefore, if `cd tmp` fails, `echo "Error"` is executed; otherwise it is not.
 
-Hajtsuk végre a parancsot úgy, hogy a `tmp` mappa nem létezik, és nézzük meg az eredményt!
-Ezután hozzuk létre a mappát, és adjuk ki úgy is a parancsot!
+Run the command when the `tmp` folder does not exist and examine the result!
+Then create the folder and run the command again!
 
-### 2. példa
-Hozzuk létre a `dir_1` nevű mappát, és ha sikerül, lépjünk is bele (egyébként ne csináljunk
-semmit)!
+### Example 2
+Create a folder named `dir_1`, and enter it if successful (otherwise do nothing)!
 
 ```bash
 mkdir dir_1 && cd dir_1
 ```
 
-A fönti az előző példához nagyon hasonló, csak itt a második parancs akkor hajtódik végre,
-ha az első sikeres volt.
+The above is very similar to the previous example, except that here the second command is
+executed only if the first one succeeds.
 
-### 3. példa
-Próbáljunk meg belépni egy mappába, és ha sikerül, akkor írjuk ki a working directory-t,
-egyébként hozzuk létre a mappát! (working directory kiírása: `pwd`)
+### Example 3
+Try to enter a folder and, if successful, print the current working directory;
+otherwise create the folder! (print the current working directory with `pwd`)
 
 ```bash
 cd dir_2 && pwd || mkdir dir_2
 ```
 
-A fönti parancs rövid magyarázatra szorulhat. 3 részből áll:
-1. `cd dir_2` -- megpróbál belépni a mappába
-2. `pwd` -- kiírja a jelenlegi working directory-t
-3. `mkdir dir_2` -- létrehozza a mappát
+The command above may require a short explanation. It consists of three parts:
+1. `cd dir_2` -- attempts to enter the folder
+2. `pwd` -- prints the current working directory
+3. `mkdir dir_2` -- creates the folder
 
-Kétféleképpen történhez a végrehajtás, attól függően, hogy a mappába be lehet-e lépni.
-1. **Az első parancs elbukik:** az && jel utáni parancs nem hajtódik végre (mert az
-csak akkor hajtódik végre, ha az előtte lévő parancs sikeres), a || jel utáni viszont
-igen, mert azelőtt hiba lépett fel. Tehát létrejön a directory.
-2. **Az első parancs sikeresen lefut:** az && jel utáni parancs végrehajtódik, bizonyára
-sikeresen, mert a `pwd` parancsnak nincs itt érdemi lehetősége elbukni. Ekkor az || jel
-utáni parancs nem hajtódik végre, mert előtte nem volt hiba.
+Execution can proceed in two ways, depending on whether we can enter the folder.
+1. **The first command fails:** the command after `&&` is not executed (because it is
+executed only if the preceding command succeeds), but the command after `||` is executed
+because an error occurred before it. Therefore, the folder is created.
+2. **The first command succeeds:** the command after `&&` is executed, probably
+successfully, because the `pwd` command has no meaningful way to fail here. The command
+after `||` is not executed because there was no error before it.
 
-További lehetőségek lépnének fel, ha `pwd` elbukhatna.
+Additional cases would arise if `pwd` could fail.
 
-Megjegyzendő, hogy alapesetben, ha kétszer egymás után adjuk ki a parancsot, akkor
-elsőre hiba lesz, másodjára nem.
+Note that normally, if we run the command twice in a row, it will fail the first time
+but not the second time.
 
-**Kérdés:** mi lesz, ha a `dir_2` mappa már létezik, de nincs rajta execute jogosultságunk?
+**Question:** what happens if the `dir_2` folder already exists, but we do not have execute permission for it?
 
-### 4. példa
-Próbáljunk meg belépni a `dir_3` mappába, és ha nem sikerül, hozzuk létre azt, majd 
-lépjünk bele! Mindezt természetesen oldjuk meg egyetlen sor parancsban!
+### Example 4
+Try to enter the `dir_3` folder and, if that fails, create it and then enter it!
+Naturally, solve all of this with a single line of commands!
 
-**Megoldás:**
+**Solution:**
 
 ```bash
 cd dir_3 || mkdir dir_3 && cd dir_3
 ```
 
-A fönti példákat tovább lehetne kombinálni, de nem érdemes. Már a három részből álló
-kombinált parancsok is ritkák, ugyanis ránézésre nem a legjobban érthetők. Gyakrabban 
-használjuk a stream-ek (folyamok) átvezetését egyikből másikba. Nézzünk erre is néhány
-példát!
+The examples above could be combined further, but it is not worthwhile. Even commands
+consisting of three parts are uncommon, since they are not very easy to understand at a
+glance. We more often redirect streams from one command to another. Let us look at some
+examples of this as well!
 
-### 5. példa
-Hozzunk létre egy fájlt xyz.txt néven, és írjuk bele `echo` segítségével a nevünket!
+### Example 5
+Create a file named `xyz.txt` and use `echo` to write our name into it!
 
 ```bash
 touch xyz.txt
 echo "Johnny Bravo" > xyz.txt
 ```
 
-Megjegyzendő, hogy a `touch` valójában felesleges, mert a második parancsnál, ha nem 
-létezik a fájl, akkor a stream irányítás létrehozza.
+Note that `touch` is actually unnecessary, because if the file does not exist when the
+second command is run, the stream redirection creates it.
 
 ```bash
-echo "Johnny Bravo" > xyz.txt # Ha xyz.txt nem létezik,
-                              # akkor itt létrejön
+echo "Johnny Bravo" > xyz.txt # If xyz.txt does not exist,
+                              # it is created here.
 ```
 
-A fájl tartalmát megnézhetjük `nano` vagy `cat` segítségével is.
+We can view the contents of the file with either `nano` or `cat`.
 
-### 6. példa
-Készítsünk egy `www.txt` nevű fájlt, és írjuk bele `echo` segítségével a nevünket 
-és a neptun kódunkat! Ezután másoljuk be ennek a fájlnak a tartalmát az `xyz.txt`
-fájl végére!
+### Example 6
+Create a file named `www.txt` and use `echo` to write our name and Neptun code into it!
+Then append the contents of this file to the end of the `xyz.txt` file!
 
 ```bash
 echo "Donald Duck" > www.txt
 echo "QUACK1" >> www.txt
 cat www.txt >> xyz.txt
-# Nézzük is meg az xyz.txt tartalmát:
+# Let us also view the contents of xyz.txt:
 cat xyz.txt
 ```
 
-A fönti parancsoknál elismételendő, hogy `>` kitörli a fájl eredeti tartalmát,
-`>>` pedig hozzáír a fájl eddigi tartalmához.
+As a reminder, `>` deletes the original contents of the file, while `>>` appends to
+the file's existing contents.
 
-### 7. példa
-Kérdezzük le a jelenlegi mappa tartalmát, és írjuk bele a visszaadott szöveget
-az `content.txt` fájlba!
+### Example 7
+List the contents of the current folder and write the returned text to the `content.txt` file!
 
 ```bash
 ls > content.txt
 ```
 
-Tanulság: bármely parancs outputját bele lehet irányítani egy fájlba.
+Lesson: the output of any command can be redirected to a file.
 
-### 8. példa
-Megesik, hogy installálunk valamit a gépre, és az installálás közben olyan szövegek
-íródnak ki, amikre nincs szükségünk, nem akarjuk látni őket. Szimuláljuk ezt az
-`ls -la` paranccsal! Adjuk ki a parancsot, de ne jelenjen meg az outputja!
-(Igen, ennek nincs sok értelme, de nem tanultunk még olyan parancsot, aminek az 
-outputját van értelme ignorálni. Úgyhogy nézzük meg az output ignorálást, és 
-felejtsük el, hogy erre a parancsra biztos nem használnánk!)
+### Example 8
+Sometimes we install something on the computer and text is printed during installation
+that we do not need or want to see. Let us simulate this with the `ls -la` command!
+Run the command, but do not display its output!
+(Yes, this does not make much sense, but we have not learned a command whose output
+would be useful to ignore. So let us examine how to ignore output and forget that we
+would certainly not use this command for that purpose!)
 
 ```bash
 ls -la > /dev/null
 ```
 
-Magyarázat: a `/dev/null` egy fájl a rendszeren (ami a gyökér mappán belül lévő `dev`
-mappában van). Ennek a fájlnak az a különlegessége, hogy amit beleírunk, az eltűnik.
-Konkrétan arra szolgál, hogy az ignorálandó streameket beleírányítsuk. Nem fogjuk
-használni semmire, de ha látjuk valahol tutorialban, akkor ne lepődjünk meg rajta!
-Ez egy speciális fájl, aminek nincs és nem is lesz tartalma.
+Explanation: `/dev/null` is a file on the system (located in the `dev` folder inside the
+root folder). The special feature of this file is that anything written to it disappears.
+It is specifically used to redirect streams that should be ignored. We will not use it for
+anything, but if we see it in a tutorial, we should not be surprised!
+It is a special file that has no contents and never will.
 
-### 9. példa
-Próbáljuk meg ismét létrehozni `dir_3`-at, de úgy, hogy már létezik! A hibaüzenet
-ne jelenjen meg!
+### Example 9
+Try to create `dir_3` again, even though it already exists! The error message should
+not be displayed!
 
-Azt vesszük észre, hogy a következő megoldás nem működik:
+We notice that the following solution does not work:
 
 ```bash
 mkdir dir_3 > /dev/null
 ```
 
-Itt jön a képbe az, hogy a rendszeren három standard csatornát különböztetünk meg:
-- **stdin:** *Standard input* rövidítése. A felhasználó által beírt szöveg megy rá.
-Azonosító száma: 0.
-- **stdout:** *Standard output* rövidítése. A programok által kiírt adatok mennek rá
-(`echo`, `ls`, stb.). Eddig többnyire ezt a csatornát láttuk a terminálunkon
-megjelenni.
-- **stderr:** *Standard error* rövidítése. Ide mennek a programok által kiírt
-hibaüzenetek. Ezek is megjelennek a terminálunkon, ezért nem látjuk a különbséget
-közte és az *stdout* között.
+This is where the fact that the system distinguishes three standard channels becomes
+important:
+- **stdin:** short for *standard input*. Text entered by the user is sent here.
+Its identifier is 0.
+- **stdout:** short for *standard output*. Data printed by programs is sent here
+(`echo`, `ls`, etc.). So far, this is the channel we have mostly seen displayed in our
+terminal.
+- **stderr:** short for *standard error*. Error messages printed by programs are sent here.
+These are also displayed in the terminal, which is why we do not see the difference
+between it and *stdout*.
 
-A fönti megoldás azért nem működik, mert a `>` operátor csak az *stdout* csatornát 
-irányítja bele a `/dev/null` fájlba, az *stderr* csatornát nem.
+The solution above does not work because the `>` operator redirects only the *stdout*
+channel to the `/dev/null` file, not the *stderr* channel.
 
-Megoldás:
+Solution:
 
 ```bash
 mkdir dir_3 2> /dev/null
 ```
 
-Ebben az esetben annyi történt, hogy odaírtuk a `>` elé annak a csatornának az 
-azonosítóját, amit át szeretnénk irányítani. Itt megjegyzendő, hogy a következő
-két parancs teljesen ugyanazt csinálja:
+In this case, we wrote the identifier of the channel we want to redirect before the `>`.
+Note that the following two commands do exactly the same thing:
 
 ```bash
-ls > random_something.txt # stdout csatornát beleírányítja a fájlba
-ls 1> random_something.txt # szintén az stdout-ot irányítja bele,
-                           # csak ki is írtuk
+ls > random_something.txt # redirects stdout to the file
+ls 1> random_something.txt # also redirects stdout,
+                           # but writes its identifier explicitly
 ```
 
-Alapértelmezettként `>` és `>>` operátorok az 1-es (standard output) csatornát 
-irányítják át.
+By default, the `>` and `>>` operators redirect channel 1 (standard output).
 
-A csatorna irányításokra később vissza fogunk térni, mikor mi magunk is írunk
-hibaüzeneteket.
+We will return to channel redirection later, when we write error messages ourselves.
 
-## grep parancs
-A harmadik féle parancskombinálás a `|` jel (amit bash nyelvben "csővezeték operátor"
-néven is ismernek) által lehetséges. **Ezt használják leggyakrabban.** Mint azt 
-korábban olvashattuk, ez az operátor **az egyik parancs kimenetét egy másik parancs
-bemenetére irányítja**. Emiatt kicsit olyan, mintha egy csővel összekötné a kettőt
-(ezért a "csővezeték operátor" elnevezés).
+## The grep command
+The third way to combine commands is made possible by the `|` symbol (also known as the
+"pipe operator" in Bash). **This is used most often.** As we read earlier, this operator
+**redirects the output of one command to the input of another command**. It therefore looks
+a little as if it connects the two with a pipe (hence the name "pipe operator").
 
-A leggyakrabban ezt az operátort a `grep` paranccsal kombinálva használják. Ez egy 
-nagyon (nagyon-nagyon) hasznos parancs, úgyhogy sokat fogunk vele foglalkozni.
-Gyakorlatilag ennyit csinál: **kiválasztja a bemenetéből azokat a sorokat, 
-amelyek illeszkednek egy megadott mintára**.
+This operator is most often used together with the `grep` command. It is a very
+(very, very) useful command, so we will spend a lot of time on it.
+It essentially does this: **it selects from its input the lines that match a given pattern**.
 
-Nézzük meg példákon keresztül! Először hozzunk létre egy fájlt `people.csv`
-néven. A tartalma a következő legyen:
+Let us look at some examples! First, create a file named `people.csv`.
+Its contents should be as follows:
 
 ```
 Name;Birthdate;Phone;Skill
@@ -278,82 +270,80 @@ Dagobert McChips;1956.08.31.;06700001111;Cooking
 Bumfolt Rupor;1967.09.11.;06201112233;Marketing
 ```
 
-Ebben a fájlban fogunk keresgetni a `grep` parancs segítségével.
+We will search this file with the `grep` command.
 
-### 10. példa
-Írassuk ki azokat a sorokat, ahol a személy skillje az IT!
+### Example 10
+Print the lines where the person's skill is IT!
 
 ```bash
 cat people.csv | grep "IT"
 ```
 
-A `cat` paranccsal kiolvassuk a teljes `people.csv` fájlt, és a `|` operátorral
-"belevezetjük" a `grep` parancsba. Emellett megadjuk, hogy mit keresünk az 
-adott sorban: "IT". A `grep` kiírja azokat a sorokat, amiben benne van a 
-megadott szöveg.
+With the `cat` command, we read the entire `people.csv` file and use the `|` operator
+to "feed" it into the `grep` command. We also specify what we are looking for in the
+given line: "IT". `grep` prints the lines that contain the specified text.
 
-### 11. példa
-Írassuk ki azokat a sorokat, ahol a telefonszám 30-as.
+### Example 11
+Print the lines where the phone number starts with 30.
 
 ```bash
 cat people.csv | grep "0630"
 ```
 
-### 12. példa
-Írassuk ki azokat a sorokat, ahol a személy 2000-ben vagy utána született.
+### Example 12
+Print the lines where the person was born in 2000 or later.
 
 ```bash
 cat people.csv | grep ";2"
 ```
 
-### 13. példa
-Írassuk ki azokat a sorokat, ahol a *Skill* megnevezése -*ing* végződésű.
+### Example 13
+Print the lines where the *Skill* value ends in *-ing*.
 
 ```bash
 cat people.csv | grep ";*ing"
 ```
 
-Ez már a következő óra anyaga (reguláris kifejezések), de a csillagról
-egyéb tanulmányainkból már tudhatjuk, hogy általában mindenre illeszkedik.
-Sajnos sokkal bonyolultabb kereséseket nem tudunk megvalósítani reguláris 
-kifejezések nélkül. Ezeket már a következő órára hagyjuk.
+This is already material for the next lesson (regular expressions), but from other
+studies we may know that an asterisk generally matches anything.
+Unfortunately, we cannot implement much more complicated searches without regular
+expressions. We will leave these for the next lesson.
 
-### 14. példa
-Készítsünk egy `IT.txt` nevű fájlt az alábbi tartalommal:
+### Example 14
+Create a file named `IT.txt` with the following contents:
 
 ```
 People at IT:
 ***
 ```
 
-Ahol `***` helyére rakjuk be a `people.csv`-ből az IT-s emberek sorait.
+Replace `***` with the lines of the IT employees from `people.csv`.
 
 ```bash
 echo "People at IT:" > IT.txt
 cat people.csv | grep "IT" >> IT.txt
 ```
 
-A fönti sorokban kombináltuk a stream átirányító operátort a csővezeték operátorral.
-Külön-külön már láttuk a működésüket, ami egyben sem bonyolultabb. *Mindössze balról
-jobbra kell olvasni, hogy mi történik, és akkor egyértelmű lesz.*
+In the lines above, we combined the stream redirection operator with the pipe operator.
+We have already seen how they work separately, and using them together is no more
+complicated. *We only need to read from left to right to understand what happens.*
 
-## Feladatok
-Az alábbi feladatokat csináljuk meg önállóan!
+## Exercises
+Complete the following exercises independently!
 
-### 1. feladat
-Gyűjtsük ki egy `voda.txt` nevű fájlba a `people.csv` fájlból azokat, akik 
-70-es telefonszámmal rendelkeznek.
+### Exercise 1
+Collect in a file named `voda.txt` the people from `people.csv` whose phone number starts with 70.
 
-### 2. feladat
-Próbáljunk meg belépni a `dir_4` nevű mappába, és ha sikerül, hozzunk létre benne egy
-`im_tired.txt` nevű fájlt. Ha nem sikerül, hozzuk létre a `dir_4` mappát!
+### Exercise 2
+Try to enter the folder named `dir_4` and, if successful, create a file named
+`im_tired.txt` inside it. If that fails, create the `dir_4` folder!
 
-### 3. feladat
-Próbáljuk meg kilistázni a `dir_5` nevű mappa tartalmát. Ha nem sikerül, ne írjunk 
-hibát, hanem hozzuk létre a `dir_5` mappát!
+### Exercise 3
+Try to list the contents of the folder named `dir_5`. If that fails, do not print an
+error; create the `dir_5` folder instead!
 
-### 4. feladat
-Hozzuk létre az alábbi fájlokat egy `pictures` nevű directory-ban:
+### Exercise 4
+Create the following files in a directory named `pictures`:
 
 ```
 1.jpg
@@ -366,12 +356,12 @@ Hozzuk létre az alábbi fájlokat egy `pictures` nevű directory-ban:
 10.svg
 ```
 
-Listázzuk ennek a mappának a tartalmát, és minden `png` fájlt írjunk bele egy
-`sprites.list` nevű fájlba! (Tipp: a korábbiakban `cat people.csv` parancsot most
-az `ls pictures` parancs fogja felváltani.)
+List the contents of this folder and write every `png` file into a file named
+`sprites.list`! (Hint: replace the previously used `cat people.csv` command with
+the `ls pictures` command.)
 
-## Összefoglalás
-A következő parancsokat tanultuk:
-- `cat` kiírja egy fájl tartalmát a standard outputra.
-- `echo` kiírja a standard outputra a paraméterként megkapott szöveget.
-- `grep` kiírja a megadott mintára illeszkedő sorokat.
+## Summary
+We learned the following commands:
+- `cat` prints the contents of a file to standard output.
+- `echo` prints the text given as an argument to standard output.
+- `grep` prints the lines that match the specified pattern.
