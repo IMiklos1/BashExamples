@@ -14,12 +14,12 @@ With `nano`, we can edit files without opening a new window.
 This is useful when we only want to write a few lines to a file, or when we want
 to edit a file as an administrator.
 
-Open a terminal and create a `lesson3` folder inside the `szgyak` folder!
+Open a terminal and create a `lesson3` folder inside the `practice` folder!
 Enter this folder and open a file named `tmp.txt` with `nano`!
 
 ```bash
-mkdir szgyak/lesson3
-cd szgyak/lesson3
+mkdir practice/lesson3
+cd practice/lesson3
 nano tmp.txt # command name and file path
 ```
 

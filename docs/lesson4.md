@@ -8,8 +8,8 @@ with the `people.csv` file from the previous lesson inside it
 (the easiest way is to copy it).
 
 ```bash
-mkdir szgyak/lesson4
-cd szgyak/lesson4
+mkdir practice/lesson4
+cd practice/lesson4
 cp ../lesson3/people.csv ./ # copies the file into this directory
                             # under its original name
 ```
