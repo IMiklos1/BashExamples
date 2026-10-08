@@ -1,128 +1,125 @@
-# 5. óra
+# Lesson 5
 
-A korábbiakban megtekintettük, hogy a Bashben elérhető toolokat milyen mechanikákkal
-tudjuk kombinálni, saját algoritmust viszont egyszer sem alkalmaztunk. Amennyiben 
-ezt szakszavakkal akarjuk kifejezni, akkor azt mondjuk, hogy eddig a Bash **deklaratív**
-használatával foglalkoztunk. Nem lehet azonban mindent leírni deklaratívan, ugyanis 
-a deklaratív nyelvi elemek mögött is **imperatív** megvalósítások vannak. Elkerülhetetlen,
-hogy akadjanak lefedetlen használati esetek.
+So far, we have looked at how to combine the tools available in Bash, but we have not
+applied our own algorithms even once. To put this in technical terms, we have so far
+focused on the **declarative** use of Bash. However, not everything can be expressed
+declaratively, since **imperative** implementations also lie behind declarative language
+elements. Inevitably, there will be use cases that are not covered.
 
-A Bash nyelvben az ilyen esetekre beleraktak imperatív elemeket, amiket már más tárgyakból
-ismerünk. Vannak változók, tömbök, if-else vizsgálatok, ciklusok (for és while is), 
-függvények. Azonban megjegyzendő, hogy **egy Bash-hez hasonló shell script nyelv akkor 
-működik a legjobban, ha egyszerű dolgokat akarunk vele gyorsan megfogalmazni**. Nem az a 
-célja, hogy bonyolult, részletesen megtervezett, finoman strukturált programok készüljenek
-benne.
+The Bash language includes imperative elements for these cases, which we already know
+from other courses. It has variables, arrays, if-else conditions, loops (both `for` and
+`while`), and functions. However, keep in mind that **a shell scripting language like
+Bash works best when we want to express simple things quickly**. It is not intended for
+creating complex, carefully planned, finely structured programs.
 
-Létezik egy **KISS** nevű programozási elv, ami itt fokozottan igaz.
-KISS = "Keep it Simple, Stupid!" Ha elkezd nagyon bonyolulttá válni a Bash programunk, akkor 
-lehet nem Bashben kéne írni. A következő szerkezeteket tehát használjuk ésszel, és minél
-kevesebbet kell belőlük bevetnünk, annál jobb. Időnként azonban megkönnyítik az életünket,
-így lássunk hozzá.
+There is a programming principle called **KISS**, which is especially applicable here.
+KISS = "Keep it Simple, Stupid!" If our Bash program starts getting very complicated,
+perhaps we should not be writing it in Bash. So use the following constructs wisely;
+the fewer we need, the better. Still, they can make life easier from time to time, so
+let's get started.
 
-## Változók
-Bash-ben a legegyszerűbben a következőképpen lehet változót deklarálni:
+## Variables
+The simplest way to declare a variable in Bash is as follows:
 
 ```bash
 greeting="Hello World!"
 ```
 
-A változónak mindegy, hogy létezett-e korábban. Ezenfelül a Bash egy *loosely typed* nyelv
-(lazán típusos), vagy más néven *dynamically typed* (dinamikusan típusos). Ez annyit jelent,
-hogy a típust sem kell megadnunk, ugyanis az **futásidőben** fog kiértékelődni. Ez ellentétes a 
-C-vel és társaival, amelyek *statikusan típusosak*, tehát nekik **fordításidőben** kell 
-tudni a típust.
+It does not matter whether the variable already existed. In addition, Bash is a *loosely
+typed* or, in other words, *dynamically typed* language. This means that we do not need
+to specify the type, since it is determined **at runtime**. This is unlike C and similar
+languages, which are *statically typed* and therefore need to know the type **at compile
+time**.
 
-Ha valamilyen speciális tulajdonságot akarunk adni egy változónak létrehozáskor, akkor 
-a `declare` paranccsal és kapcsolóival kell deklarálnunk. A következő használati eseteket 
-nézzük:
+If we want to give a variable a special property when creating it, we need to declare it
+with the `declare` command and its options. Let's look at the following use cases:
 
 ```bash
-declare -i num=10 # az -i kapcsolóval egész számként deklarál
-declare -r constant_thing=10 # az -r kapcsoló read only változóként deklarál
-# az -a kapcsoló tömbként deklarál, de majd később megnézzük
-# az -x kapcsoló exportál, de erre aligha lesz szükségünk a tárgy során
+declare -i num=10 # the -i option declares it as an integer
+declare -r constant_thing=10 # the -r option declares it as a read-only variable
+# the -a option declares it as an array, but we'll look at that later
+# the -x option exports it, but we will hardly need that in this course
 ```
 
-Az integernek deklarálás elvégez pár ellenőrzést, és hibákat is dob, de váratlan viselkedéseket
-produkálhat annak, aki nem ismeri ki magát jól a nyelvben.
+Declaring a variable as an integer performs some checks and can also raise errors, but
+it may produce unexpected behavior for anyone who is not very familiar with the language.
 
-Amennyiben törölni akarunk egy deklarált változót, azt az `unset` paranccsal tehetjük meg.
+To remove a declared variable, we can use the `unset` command.
 
 ```bash
 unset num
-unset constant_thing # hiba, mert constans. Nem tudjuk törölni
+unset constant_thing # error: it is constant, so we cannot remove it
 ```
 
-Egy parancs tartalmát is változóba helyezhetjük a következőképpen:
+We can also put the output of a command into a variable as follows:
 
 ```bash
 content=$(ls -la)
 ```
 
-Ha a változó tartalmát el akarjuk érni, akkor a változó elé `$` jelet kell raknunk. Ez 
-azért van, mert enélkül az interpreter nem tudja, hogy a változó tartalmát, és nem a beírt
-szöveget akarjuk használni. A következő példában ez látható:
+To access a variable's contents, we need to put a `$` sign before its name. Without it,
+the interpreter cannot tell that we want to use the variable's contents rather than the
+literal text we typed. The following example shows this:
 
 ```bash
-greeting="Helloka"
-echo greeting # kiírja, hogy greeting
-echo $greeting # kiírja, hogy Helloka
+greeting="Hi there"
+echo greeting # prints "greeting"
+echo $greeting # prints "Hi there"
 content=$(ls -la)
-echo $content # kiírja, amit az ls -la parancs kiírt volna.
+echo $content # prints what the ls -la command would have printed
 ```
 
-Akadnak előre definiált környezeti változók. Ilyen például a `USER`, ami a shellbe belépett
-felhasználót tárolja (tehát a mi felhasználónevünket), vagy a `HOME`, ami a felhasználó home 
-mappájának elérési útját adja meg.
+There are predefined environment variables. For example, `USER` stores the user who
+logged into the shell (that is, our username), and `HOME` gives the path to the user's
+home directory.
 
 ```bash
 echo $USER
 echo $HOME
 ```
 
-Ha kíváncsiak vagyunk az összes beállított környezeti változóra, akkor az `env` paranccsal 
-kiírhatjuk őket.
+If we want to see all the environment variables that have been set, we can print them
+with the `env` command.
 
 ```bash
 env
 ```
 
-Egy változó értéke könnyedén beilleszthető egy szövegbe is. Például a következőképpen:
+The value of a variable can also be easily inserted into text. For example:
 
 ```bash
-greeting=Helloka
+greeting=Hi
 echo "Hello $USER!"
 echo "$greeting dear friend!"
 echo "$greeting $USER! You live at $HOME."
 ```
 
-Ha azt akarjuk, hogy a Bash a szövegben ne értelmezzen változókat, akkor vagy rakunk egy 
-backslash karaktert a dollárjel elé, vagy egyszeres idézőjelek között írjuk a szöveget.
-A következő kettő ugyanazt írja ki:
+If we do not want Bash to interpret variables in the text, we can either put a backslash
+before the dollar sign or enclose the text in single quotes. The following two commands
+print the same thing:
 
 ```bash
-greeting=Helloka
+greeting=Hi
 echo "\$greeting dear friend, \$USER!"
 echo '$greeting dear friend, $USER!'
 ```
 
-Amennyiben a változó nem volt valamilyen értékkel feltöltve, akkor a parancsértelmező egyetlen 
-whitespace karakterként fogja kezelni:
+If a variable has not been assigned a value, the command interpreter treats it as an
+empty string:
 
 ```bash
 echo "something is $nothing at all."
 # Output: something is  at all.
-# Nincs hiba!
+# No error!
 ```
 
-Mivel a terminál egyfajta szövegértelmező is, többnyire szövegekkel fogunk dolgozni, de 
-lehet számokkal is műveletet végezni. Ehhez azonban egy speciális szintaxis kell. Nem fogjuk
-szeretni, de emlékezzünk: ezt a nyelvet nem összeadásra és kivonásra találták ki, hanem 
-fájlok, felhasználók, adatcsatornák, parancssori programok, stb. kezelésére. Ha komolyabb 
-aritmetika kell, keressünk más nyelvet!
+Since the terminal is also a kind of text interpreter, we will mostly work with text, but
+we can perform operations on numbers too. This requires special syntax, though. We may
+not like it, but remember: this language was not designed for addition and subtraction;
+it was designed for working with files, users, data streams, command-line programs, etc.
+If you need more serious arithmetic, choose another language!
 
-Az alábbiak mind helyesek:
+The following are all valid:
 
 ```bash
 a=5
@@ -137,36 +134,36 @@ echo $((a*b))
 echo $((a%b)) # modulo
 ```
 
-A dollárjel és kettős zárójel aritmetikai műveletekhez megfelelő. A két zárójelen belül nem 
-kell a dollárjelet kirakni. Vegyük észre, a Bash nyelv egészosztásokkal dolgozik. **Nincs beepített
-lebegőpontos típus!** Erre egy segédprogramot tudunk használni, amit később meg fogunk nézni.
+The dollar sign and double parentheses are used for arithmetic operations. We do not
+need to put dollar signs inside the parentheses. Note that Bash uses integer division.
+**There is no built-in floating-point type!** We can use a helper program for this, which
+we will look at later.
 
-A szövegkezeléshez és változódeklaráláshoz további műveletek is tartoznak. Példákon keresztül
-meg fogunk nézni néhányat. A következő egy rövid összefoglaló.
+There are other operations for text handling and variable declarations. We will look at
+some of them through examples. Here is a short summary:
 
-- `echo` \``ls -la`\` ugyanaz, mintha `echo $(ls -la)` parancsot adnánk ki.
-- `${valtozo:-ertek}` ha `valtozo` nem üres, akkor a változó értékét jelenti, egyébként az `ertek`
-értékét.
-- `${valtozo:=ertek}` ha `valtozo` értéke még üres, akkor az `ertek`-kel lesz egyenlő.
-- `${valtozo:?ertek}` ha `valtozo` üres, akkor kiíródik az érték, és hibával exitál a program.
-Ez jó egy változó vagy bemeneti paraméter meglétének ellenőrzésére.
-- `${valtozo:+ertek}` ha `valtozo` nem üres, akkor `ertek`-et kapunk vissza.
-- `${#valtozo}` visszaadja a `valtozo` változóban található szöveg hosszát.
-- `${valtozo:3:5}` visszaadja a `valtozo` változóban található szöveg részszövegét (substring).
-- `${valtozo/"thing"/"stuff"}` a `valtozo` változóban található szövegben az **első** "thing" szöveget
-"stuff" szövegre cseréli (és visszaadja az új szöveget).
-- `${valtozo//"thing"/"stuff"}` a `valtozo` változóban található szövegben az **összes** "thing"
-szöveget "stuff" szövegre cseréli (és visszaadja az új szöveget).
+- `echo` \``ls -la`\` is equivalent to running `echo $(ls -la)`.
+- `${variable:-value}` gives the value of `variable` if it is not empty; otherwise, it gives `value`.
+- `${variable:=value}` sets `variable` to `value` if `variable` is empty.
+- `${variable:?value}` prints `value` and exits with an error if `variable` is empty.
+  This is useful for checking that a variable or input parameter is set.
+- `${variable:+value}` gives `value` if `variable` is not empty.
+- `${#variable}` returns the length of the text in `variable`.
+- `${variable:3:5}` returns a substring of the text in `variable`.
+- `${variable/"thing"/"stuff"}` replaces the **first** occurrence of "thing" in `variable`
+  with "stuff" (and returns the new text).
+- `${variable//"thing"/"stuff"}` replaces **all** occurrences of "thing" in `variable`
+  with "stuff" (and returns the new text).
 
-## Bash szkriptek
+## Bash scripts
 
-Amelyik szkript változót generál, valószínűleg nem egysoros. Éppen ezért ezeket szeretnénk 
-egy script fájlban eltárolni, hogy mikor a programunkat futtatni akarjuk, akkor ne kelljen
-sorról sorra beírnunk a parancsokat. A Bash szkripteket tartalmazó fájlokat `.sh` kiterjesztéssel
-szokás elmenteni (Windowson az ottani parancsértelmezőknek a `.bat`, `.cmd`, `.ps1`
-kiterjesztések jellemzőek). Ezek egyszerű szöveges fájlok, amikbe a parancsainkat írjuk.
+Any script that creates variables is probably more than one line long. That is why we
+want to save these commands in a script file, so we do not have to type them line by line
+whenever we want to run our program. Files containing Bash scripts are usually saved with
+the `.sh` extension (on Windows, `.bat`, `.cmd`, and `.ps1` are common extensions for
+command interpreters). These are plain text files in which we write our commands.
 
-Nyissunk meg egyet a `nano` szövegszerkesztőben a `lesson5` mappában!
+Let's open one in the `nano` text editor in the `lesson5` directory!
 
 ```bash
 mkdir lesson5
@@ -174,27 +171,27 @@ cd lesson5
 nano my_script.sh
 ```
 
-Írjuk bele a következőt:
+Write the following in it:
 
 ```bash
 favourite_number=42
 echo "The answer to everything is: $favourite_number"
 ```
 
-Mentsük el a fájlt, aztán lépjünk vissza a terminálba! Futtassuk a következő paranccsal:
+Save the file, then return to the terminal! Run it with the following command:
 
 ```bash
 bash my_script.sh
 ```
 
-Futtathatjuk a következőképpen is (és jellemző is így futtatni a parancssori futtatható fájlokat):
+We can also run it as follows (this is also the typical way to run executable command-line files):
 
 ```bash
 ./my_script.sh
 ```
 
-Ehhez viszont először bele kell írni a fájl első sorába a *a parancsértelmező elérési útját*.
-A fájl tartalmát módosítsuk a következőre:
+To do this, however, we first need to write *the path to the command interpreter* on the
+first line of the file. Change the file contents to:
 
 ```bash
 #!/bin/bash
@@ -203,22 +200,22 @@ favourite_number=42
 echo "The answer to everything is: $favourite_number"
 ```
 
-Így a fájl első sorából a parancsértelmező tudni fogja, hogy milyen script vagy futtatható 
-állományként kell értelmeznie ezt a futtatott fájlt. Amennyiben nem így kívánjuk futtatni a 
-fájlt, ez opcionális.
+This way, the command interpreter will know from the first line of the file how to
+interpret the file being run—as a script or executable. This is optional if we do not
+intend to run the file this way.
 
-Megjegyzés: ekkor kell a futtatási jog is. Adjuk meg `chmod` paranccsal!
+Note: the file also needs execute permission. Set it with the `chmod` command!
 
-## Paraméterek
+## Parameters
 
-A szkript fájlok jók arra, hogy elmentsük benne a programunkat, és utána lefuttassuk.
-Ezzel bizonyos gyakran ismétlődő folyamatok jól automatizálhatók, és programozóként tényleges
-hasznát vehetjük. Keveset ér viszont, ha nem tudunk *paramétereket* adni szkriptünknek.
+Script files are useful for saving our programs and running them later. This lets us
+automate certain frequently repeated processes, which can be genuinely useful as
+programmers. However, they are not very useful if we cannot pass *parameters* to them.
 
-Vegyünk például egy scriptet, ami kiírja az összes olyan fájlt egy paraméterként kapott
-mappában, ahol `root` a tulajdonos!
+For example, consider a script that prints all files in a directory provided as a
+parameter whose owner is `root`!
 
-Írjuk a következőt egy `useless_printer.sh` nevű fájlba!
+Write the following in a file named `useless_printer.sh`!
 
 ```bash
 #!/bin/bash
@@ -226,15 +223,15 @@ mappában, ahol `root` a tulajdonos!
 echo $(ls -la ~ | grep root)
 ```
 
-Eddig elég haszontalan a szkriptünk, ugyanis csak mappára és egy felhasználóra működik.
-A szkriptek azonban parametrizálhatók, és meghívhatók a következőképpen:
+So far, our script is rather useless, since it only works with one directory and one
+user. Scripts can, however, be parameterized and invoked as follows:
 
 ```bash
 bash useless_printer.sh dirname username
 ```
 
-Ekkor már paramétereket adtunk a szkriptnek, csak éppen a szkript egyelőre nem kezd velük
-semmit. Alakítsuk át a következőre:
+We have now passed parameters to the script, but the script does not do anything with
+them yet. Change it to the following:
 
 ```bash
 #!/bin/bash
@@ -242,16 +239,16 @@ semmit. Alakítsuk át a következőre:
 echo $(ls -la $1 | grep $2)
 ```
 
-Tehát a következő mondható el:
-- `$1`, `$2`, `$3`, stb. a szkript bemeneti paramétereihez nyújtanak elérést.
-- `$#` megmondja a bemeneti paraméterek számát.
-- `$*` vagy `$@` a parancssori paramétereket egyben adja meg; ilyenkor lehet tömbként 
-kezelni őket, végigiterálni rajtuk; később megnézzük.
-- `$$` a szkriptet futtató program parancsazonosítója.
-- `$?` a legutóbb végrehajtott parancs visszatérési értéke. Hibakezeléshez használható.
+In summary:
+- `$1`, `$2`, `$3`, etc. provide access to the script's input parameters.
+- `$#` gives the number of input parameters.
+- `$*` or `$@` gives all command-line parameters together; they can be treated as an array
+  and iterated over. We will look at this later.
+- `$$` is the process ID of the program running the script.
+- `$?` is the return value of the most recently executed command. It can be used for error handling.
 
-A változókat nem csak bemeneti paraméterként adhatjuk meg, hanem be is olvashatjuk a felhasználótól.
-Ez megtehető például a `read` utasítással:
+We can provide values not only as input parameters, but also read them from the user.
+This can be done, for example, with the `read` command:
 
 ```bash
 read -p "Please type a number! " x
@@ -261,11 +258,11 @@ echo "The double of your number is: $((x * 2))"
 
 
 
-## Példák
+## Examples
 
-### 1. példa
-Írjunk egyszerű programot, amely bekér a felhasználótól egy nevet és egy telefonszámot,
-majd a következő formátumban kiírja azokat egy `cred.json` fájlba:
+### Example 1
+Write a simple program that asks the user for a name and phone number, then writes them
+to a `cred.json` file in the following format:
 
 ```
 {
@@ -274,7 +271,7 @@ majd a következő formátumban kiírja azokat egy `cred.json` fájlba:
 }
 ```
 
-A következő script például megvalósítja ezt:
+The following script is one way to implement this:
 
 ```bash
 #!/bin/bash
@@ -292,15 +289,16 @@ echo '"' >> cred.json
 echo '}' >> cred.json
 ```
 
-### 2. példa
-Hozzunk létre egy shell script fájlt, mely bemeneti paraméterként beolvas két számot, és kiírja az 
-- összegüket,
-- különbségüket,
-- szorzatukat,
-- hányadosukat,
-- osztási maradékukat a standard outputra.
+### Example 2
+Create a shell script file that reads two numbers as input parameters and prints their
+- sum,
+- difference,
+- product,
+- quotient,
+- remainder
+to standard output.
 
-Ha nem kerültek megadásra az adott bemeneti paraméterek, akkor mind a két szám legyen 42.
+If the input parameters are not provided, both numbers should default to 42.
 
 ```bash
 #!/bin/bash
@@ -315,12 +313,12 @@ echo "$((a % b))"
 ```
 
 
-### 3. példa
-Hozzunk létre egy shell script fájlt, amely egy paraméterként kapott txt fáljban a `happy` szó
-minden előfordulását `not thinking about the vizsgaidőszak` szövegre cseréli, és elmenti 
-az új szöveget egy `out.txt` fájlba.
+### Example 3
+Create a shell script file that replaces every occurrence of the word `happy` in a
+parameter-provided text file with `not thinking about the exam period`, and saves the
+new text in an `out.txt` file.
 
-Egy elkészített példafájl a következő linken letölthető:
+An example file can be downloaded from the following link:
 https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/winnie_the_pooh.txt
 
 ```bash
@@ -328,18 +326,18 @@ https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/winnie_the_
 
 text=$(cat $1)
 
-printf "${text//"happy"/"not thinking about the vizsgaidőszak"}" > out.txt
+printf "${text//"happy"/"not thinking about the exam period"}" > out.txt
 ```
 
-Magyarázat: az `echo` parancsot `printf` parancsra cseréltük. A szerepe ugyanaz, de jobban
-kezeli a sortöréseket. Próbáljuk ki `echo`-val is, és látni fogjuk! Alapesetben mindegy
-melyiket használjuk.
+Explanation: we replaced the `echo` command with `printf`. They serve the same purpose,
+but `printf` handles line breaks better. Try it with `echo` too, and you will see! In
+most cases, it does not matter which one we use.
 
-### 4. példa
-Írjunk egy scriptet, amely leszed a következő url-ről egy text file-t, majd kiírja belőle 
-a valid email címeket egy `emails.txt` fájlba, aztán törli az eredetileg letöltött fájlt.
+### Example 4
+Write a script that downloads a text file from the following URL, writes the valid email
+addresses from it to an `emails.txt` file, and then deletes the originally downloaded file.
 
-Url: https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/file1.txt
+URL: https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/file1.txt
 
 ```bash
 #!/bin/bash
@@ -349,14 +347,14 @@ cat file1.txt | grep "^[a-Z0-9.]\+@[a-Z0-9.]\+\.[a-Z]\{2,\}" > emails.txt
 rm file1.txt
 ```
 
-Magyarázat: a `wget` egy új parancs (web get), és letölt egy fájlt az adott url-ről.
-A hasznosabb parancsok egyike.
+Explanation: `wget` is a new command ("web get") that downloads a file from the given
+URL. It is one of the more useful commands.
 
-### 5. példa
-Kérjünk be két koordinátát a felhasználótól! Ezek legyenek egy téglalap két átellenes sarka.
-A téglalap oldalai párhuzamosak a koordináta tengelyekkel (aki játékot szeretne programozni,
-akkor annak ezek lesznek az Axis-Aligned téglalapok).
-Írjuk ki a téglalap területét! A koordináták **nem** lehetnek lebegőpontosak!
+### Example 5
+Ask the user for two coordinates. These will be two opposite corners of a rectangle.
+The rectangle's sides are parallel to the coordinate axes (if you want to program games,
+these are called axis-aligned rectangles).
+Print the area of the rectangle! The coordinates **must not** be floating-point numbers.
 
 ```bash
 #!/bin/bash
@@ -373,18 +371,18 @@ area=$((x_length * y_length))
 echo "Area: ${area/-/}"
 ```
 
-A végén van egy kis trükközés, ami valószínűleg ismeretlen víz számunkra. Gondoljunk bele, hogy 
-a számítások során sehol nincs biztosítva az, hogy végeredmény ne legyen negatív. Márpedig a
-terület nem lehet negatív. Ezt a végén biztosítjuk egy string művelettel.
+There is a little trick at the end that may be unfamiliar to us. Think about it: nothing
+in the calculations guarantees that the result will not be negative. But an area cannot
+be negative. We ensure this at the end with a string operation.
 
-A `${area/-/}` művelet lecseréli az `area` változóban talált első `-` jelet a semmire (tehát törli
-azt).
+The `${area/-/}` operation replaces the first `-` found in the `area` variable with
+nothing (that is, it removes it).
 
-Ugye emlékszünk, hogy a Bash nem matematikára való? Itt ez eléggé látszik. A következőnél még
-jobban fog. Lássuk, hogyan lehet Bashben lebegőpontos számokat kezelni!
+Remember that Bash is not meant for mathematics? That is quite apparent here. It will
+be even more so in the next example. Let's see how to handle floating-point numbers in Bash!
 
-### 6. példa
-Valósítsuk meg ugyanazt, mint az 5. példában, de ezúttal a koordináták lehetnek lebegőpontosak!
+### Example 6
+Implement the same thing as in Example 5, but this time the coordinates may be floating-point numbers!
 
 ```bash
 #!/bin/bash
@@ -399,18 +397,18 @@ area=$(echo "($x2 - $x1) * ($y2 - $y1)" | bc)
 echo "Area: ${area/-/}"
 ```
 
-A `bc` egy lebegőpontos számításokat végző segédprogram (szűrő). Megkap egy bemeneti szöveget,
-amely lebegőpontos műveletsorként értelmezhető, és kiírja az eredményt a standard outputra.
-Az `echo` és a csővezeték operátorral adunk inputot neki, és a `$()` szintaktikával
-eltároljuk az outputot.
+`bc` is a helper program (filter) for performing floating-point calculations. It receives
+input text that can be interpreted as a sequence of floating-point operations and prints
+the result to standard output. We provide input using `echo` and the pipe operator, then
+store the output with the `$()` syntax.
 
-A trükközés a végén ugyanaz a negatív számmal.
+The same trick with negative numbers is used at the end.
 
-## Feladatok
+## Exercises
 
-### 1. feladat
-Hozzunk létre egy shell script fájlt, amely egy konfigurációs fájlt generál nekünk YAML 
-formátumban. Ez egy rendkívül egyszerű formátum, ami jelen esetben így fog kinézni:
+### Exercise 1
+Create a shell script file that generates a configuration file for us in YAML format.
+This is an extremely simple format, which in this case will look like this:
 
 ```yaml
 username: first input
@@ -418,14 +416,14 @@ version: second input
 site: third input
 ```
 
-A shell kód kérje be az inputokat a felhasználótól, és hozza létre a `config.yml` fájlt az
-inputoknak megfelelően!
+The shell script should prompt the user for the inputs and create the `config.yml` file
+accordingly!
 
-### 2. feladat
-Legyen adott a korábbi órákról ismert `people.csv` fájl. Írjunk egy olyan szkriptet, ami
-kicseréli benne a gmail-es email címeket citromail-esre, és kiírja az új tartalmat a 
-`strange_people.csv` fájlba!
+### Exercise 2
+Use the `people.csv` file from previous lessons. Write a script that replaces the Gmail
+email addresses in it with Citromail addresses and writes the new contents to
+`strange_people.csv`!
 
-### 3. feladat
-Legyen adott a korábbi órákról ismert `people.csv` fájl. Írjunk egy olyan szkriptet, ami 
-bemeneti paraméterként megkapja a keresett ember nevét, és kiírja az életkorát!
+### Exercise 3
+Use the `people.csv` file from previous lessons. Write a script that takes the name of
+the person to search for as an input parameter and prints their age!
