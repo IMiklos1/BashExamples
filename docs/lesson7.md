@@ -1,26 +1,26 @@
-# 7. óra
-A hetedik gyakorlaton a ciklusokkal és tömbökkel fogunk foglalkozni.
+# Lesson 7
+In the seventh practice session, we will cover loops and arrays.
 
-## Ciklusok
-Bashben léteznek a már máshonnan bizonyosan ismert `for` és `while` ciklusok, némileg más szintaktikával.
-Létezik ezen felül `until` ciklus is, ami nem sokban különbözik a `while` ciklustól, mindössze annyiban,
-hogy nem addig megy, amíg a feltétel igaz, hanem addig, amíg a feltétel hamis.
+## Loops
+Bash has `for` and `while` loops, which you are surely familiar with from elsewhere, with slightly different syntax.
+There is also an `until` loop, which is not very different from a `while` loop, except
+that it runs while the condition is false rather than while it is true.
 
-Nézzünk példákat a cikluskezelésre!
+Let's look at some examples of loops!
 
-### 1. példa
-Írjuk ki 0-tól 10-ig a számokat, `for`, `while` és `until` ciklussal is!
+### Example 1
+Print the numbers from 0 to 10 using `for`, `while` and `until` loops!
 
 ```bash
 #!/bin/bash
 
-# for ciklussal
+# Using a for loop
 for (( i = 0; i <= 10; i++)); do
     printf "$i "
 done
 echo
 
-# while ciklussal
+# Using a while loop
 i=0
 while [ $i -le 10 ]; do
     printf "$i "
@@ -28,7 +28,7 @@ while [ $i -le 10 ]; do
 done
 echo
 
-# until ciklussal
+# Using an until loop
 i=0
 until [ $i -gt 10 ]; do
     printf "$i "
@@ -37,11 +37,11 @@ done
 echo
 ```
 
-### 2. példa
-Generáljunk egy véletlen számot, és írjuk ki a nála kisebb négyzetszámokat!
+### Example 2
+Generate a random number and print the square numbers smaller than it!
 
-A véletlenszám generálás Bashben a RANDOM változón keresztül elérhető. Alább néhány példa
-generálás látható, adott intervallumokban.
+Random number generation in Bash is available through the RANDOM variable. Below are some examples
+of generating numbers in specified intervals.
 
 ```bash
 echo $((RANDOM % 100)) # [0-99]
@@ -51,7 +51,7 @@ echo $((RANDOM % 50)) # [0-49]
 echo $((RANDOM % 51 + 50)) # [50-100]
 ```
 
-Az alábbi script egy megoldása a feladatnak:
+The following script is one solution to the task:
 
 ```bash
 #!/bin/bash
@@ -66,9 +66,9 @@ for (( i=1; i*i < $rnd; i++ )); do
 done
 ```
 
-### 3. példa
-Kérjünk be egy `N` értéket, és írjuk ki az első `N` Fibonacci számot, ahol nullát vesszük a
-nulladik Fibonacci számnak. Ellenőrizzük, hogy `N` egy legalább 2 értékű egész szám!
+### Example 3
+Ask for a value of `N` and print the first `N` Fibonacci numbers, taking zero as the
+zeroth Fibonacci number. Check that `N` is an integer with a value of at least 2!
 
 ```bash
 read -p "Please, give the value of N (at least 2):" N
@@ -96,9 +96,9 @@ for ((i = 2; i <= N; i++)); do
 done
 ```
 
-### 4. példa
-Írjunk egy shell scriptet, ami bemeneti paraméterként egyetlen pozitív számot vár (hibát ír, ha nem
-ezt kap). A program feladata, hogy kiírja, hogy a kapott szám prím-e.
+### Example 4
+Write a shell script that expects a single positive number as an input parameter (and reports an error if it does not
+receive one). The program should print whether the given number is prime.
 
 ```bash
 if [ $# -lt 1 ]; then 
@@ -130,19 +130,19 @@ done
 echo "Prime."
 ```
 
-## Tömbök
-Bashben a tömbök használata kötetlenebb, mint egy C-szerű nyelvben. A tömb létrejöttekor nem kell tudnunk
-annak a hosszát. A gyakorlatban a tömbök inkább listaként üzemelnek, és ezt látjuk is majd a következő
-kódokban.
+## Arrays
+Arrays in Bash are more flexible than in a C-like language. When an array is created, we do not need to know
+its length. In practice, arrays work more like lists, as we will see in the following
+code examples.
 
-Egy tömböt az alábbi módon deklarálhatunk:
+We can declare an array as follows:
 
 ```bash
 declare -a arr
 ```
 
-A tömb elemeinek az alábbi módon adhatunk értéket. A sorrend nem kötött, és elemeket ki is hagyhatunk.
-Ilyenkor a kihagyott elemek üresek lesznek.
+We can assign values to the array elements as follows. The order is not fixed, and we can skip elements.
+In that case, the skipped elements will be empty.
 
 ```bash
 arr[0]=12
@@ -150,41 +150,41 @@ arr[1]=3
 arr[5]=6
 ```
 
-Ha el akarjuk érni a tömb egy elemét, akkor a következő szintaxissal tehetjük meg:
+To access an element of the array, we can use the following syntax:
 
 ```bash
-echo ${arr[1]} # a második elem
+echo ${arr[1]} # the second element
 ```
 
-Egy tömböt deklarálhatunk és inicializálhatunk egyszerre. A következő kód létrehoz egy tömböt, és 
-kiírja a tartalmát:
+We can declare and initialize an array at the same time. The following code creates an array and
+prints its contents:
 
 ```bash
 declare -a arr=(12 3 6)
 
-# ${#arr[*]} megadja nekünk a tömbelemek számát
+# ${#arr[*]} gives us the number of array elements
 for ((i=0;i<${#arr[*]};++i)); do 
     echo ${arr[i]}
 done
 ```
 
-A `for` ciklusnak akad egy másik, hasznos szintaxisa is, amit `for-each` ciklusként szoktak emlegetni,
-és a legtöbb imperatív nyelvben megtalálható.
+The `for` loop also has another useful syntax, commonly called a `for-each` loop,
+which is found in most imperative languages.
 
 ```bash
 declare -a arr=(12 3 6)
 
-# ${arr[*]} a tömb minden elemét adja vissza
+# ${arr[*]} returns all elements of the array
 for element in ${arr[*]}; do 
     echo $element
 done
 ```
 
-Érdekesség, hogy a program bemeneti paramétereinek listáját, és akár egy parancs kimenetét is megkaphatjuk
-tömbként. Így könnyű végigiterálni rajtuk `for-each` ciklussal. A további példák a tömbökkel foglalkoznak.
+Interestingly, we can obtain the list of the program's input parameters, and even the output of a command,
+as an array. This makes it easy to iterate over them with a `for-each` loop. The following examples deal with arrays.
 
-### 5. példa
-Írjuk ki összes argumentumot, amit a program kapott!
+### Example 5
+Print all arguments received by the program!
 
 ```bash
 for i in $*; do
@@ -192,15 +192,15 @@ for i in $*; do
 done
 ```
 
-### 6. példa
-Listázzuk egy directory tartalmát, minden egyes fájlt és mappát számozottan!
-A directory elérési útját bemeneti paraméterként kapjuk meg. Ellenőrizzük, hogy kaptunk-e bemeneti
-paramétert, és hogy az tényleg egy létező directory-e!
+### Example 6
+List the contents of a directory, numbering each file and directory!
+The directory path is provided as an input parameter. Check that we received an input
+parameter and that it is an existing directory!
 
 ```bash
 #!/bin/bash
 
-# Itt azt nézzük, hogy üres-e a változó
+# Here we check whether the variable is empty
 if [[ -z $1 ]]; then
     echo "No input given." 1>&2
     exit 1
@@ -219,9 +219,9 @@ done
 ```
 
 
-### 7. példakód
-Töltsünk fel egy 10 elemű tömböt véletlen számokkal, majd menjünk végig a számokon és növeljük meg őket
-1-gyel!
+### Example code 7
+Fill an array of 10 elements with random numbers, then iterate over the numbers and increase each one
+by 1!
 
 ```bash
 #!/bin/bash
@@ -229,7 +229,7 @@ Töltsünk fel egy 10 elemű tömböt véletlen számokkal, majd menjünk végig
 declare -a arr
 
 for ((i=0; i<10; ++i)); do
-    # random szám 0-tól 99-ig
+    # random number from 0 to 99
     arr[$i]=$((RANDOM % 100))
     printf "${arr[$i]} "
 done
@@ -245,15 +245,15 @@ done
 echo
 ```
 
-### 8. példa
-Hozzunk létre egy N elemű tömböt, ahol N-t `read` paranccsal kérjük be, és ellenőrizzük, hogy 
-pozitív egész szám (hibával visszatérünk, ha nem az). Töltsük fel véletlen számokkal a tömböt,
-ahol a véletlen számok az \[1-100\] intervallumból kerülnek ki! Ezután végezzük el a következő
-műveleteket a tömbre:
-- Minimum elem kiíratása (hányadik elem és mi az értéke).
-- Maximum elem kiíratása (hányadik elem és mi az értéke).
-- Írjuk ki az elemek összegét.
-- Írjuk ki az elemek átlagát.
+### Example 8
+Create an array of N elements, asking for N with the `read` command and checking that it is
+a positive integer (returning an error if it is not). Fill the array with random numbers
+from the interval \[1-100\]! Then perform the following
+operations on the array:
+- Print the minimum element (its index and value).
+- Print the maximum element (its index and value).
+- Print the sum of the elements.
+- Print the average of the elements.
 
 
 ```bash
@@ -273,7 +273,7 @@ fi
 declare -a arr
 
 for ((i=0; i<N; ++i)); do
-    # random szám 1-től 100-ig
+    # random number from 1 to 100
     arr[$i]=$((RANDOM % 100 + 1))
     printf "${arr[$i]} "
 done
@@ -299,24 +299,24 @@ avg=$(echo "scale=4; $sum / $N" | bc)
 echo "Average: $avg."
 ```
 
-## Feladatok
-Önálló feladatok gyakorlásra.
+## Exercises
+Independent exercises for practice.
 
-### 1. feladat
-Kérjünk be egy pozitív egész számot a felhasználótól, majd írjuk azokat a páratlan, pozitív
-egészeket, amik ettől a számtól kisebbek!
+### Exercise 1
+Ask the user for a positive integer, then print the odd positive
+integers that are smaller than that number!
 
-### 2. feladat
-Valósítsuk meg a 6. példában írtakat, de ezúttal a scriptünk tetszőleges mennyiségű input 
-directory-t fogadhat. Ellenőrizzük, hogy kaptunk legalább egy bemeneti paramétert, és hogy
-minden bemeneti paraméter directory-e. Ha igen, akkor írjuk ki mindegyik tartalmát! A 
-számozást ne szakítsuk meg!
+### Exercise 2
+Implement the task from Example 6, but this time allow the script to accept any number of input
+directories. Check that we received at least one input parameter and that
+every input parameter is a directory. If so, print the contents of each one! Do not interrupt the
+numbering!
 
-### 3. feladat
-Írjunk egy scriptet, ami letölti a következő .zip fájlt az internetről:
+### Exercise 3
+Write a script that downloads the following .zip file from the internet:
 *https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/nums.zip*
 
 
-A script tömörítse ki a mappát, majd másolja át az összes `.txt` fájlt belőle egy 
-`out_nums` mappába, de úgy, hogy a `.txt` fájlok minden olyan sorát, ahol szám van,
-ossza el kettővel!
+The script should extract the directory, then copy all `.txt` files from it into an
+`out_nums` directory, dividing each line in the `.txt` files that contains a number
+by two!
