@@ -310,22 +310,22 @@ contents before extracting it again!
 **Note:** In the past, the database could not be downloaded from the department's computers due to
 *certificate* issues, so I also uploaded it to a *github* repository. The corresponding command is
 commented out. If an error occurs, replace the current URL with the following:
-*https://raw.githubusercontent.com/bbalage/BashExamples/master/assets/gtfs.zip*
+*https://raw.githubusercontent.com/imiklos1/BashExamples/master/assets/mvkzrt.zip*
 
 ```bash
 #!/bin/bash
 
 if [ -e gtfs.zip ]; then
-    rm gtfs.zip
+    rm mvkzrt.zip
 fi
 
 if [ -d gtfs ]; then
-    rm -r gtfs
+    rm -r mvkzrt
 fi
 
-wget "https://gtfsapi.mvkzrt.hu/gtfs/gtfs.zip"
-unzip gtfs.zip -d gtfs # try it without the -d option too...
-cat gtfs/routes.txt | grep "Centrum"
+wget "https://mvkzrt.hu/gtfs/mvkzrt.zip"
+unzip mvkzrt.zip -d mvkzrt # try it without the -d option too...
+cat mvkzrt/routes.txt | grep "Centrum"
 ```
 
 ### Example 4
