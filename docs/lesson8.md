@@ -1,20 +1,19 @@
-# 8. óra
+# Lesson 8
 
-A nyolcadik gyakorlaton a függvényekkel fogunk foglalkozni.
+In the eighth practice session, we will cover functions.
 
-## Függvények
-Bashben a függvények nem egészen úgy működnek, mint C-ben, vagy más imperatív nyelvekben.
-Itt is szervezési egységek, amiket többször meghívhatunk a programunkban, vagy éppen olvashatóbbá
-tehetjük általuk a kódunkat. A különbségük a szintaktikán kívül a visszatérési értékek kezelésében
-van.
+## Functions
+Functions in Bash do not work quite the same way as in C or other imperative languages.
+They are still organizational units that we can call multiple times in a program or use to make
+our code more readable. Besides the syntax, the difference lies in how return values are handled.
 
-Legpraktikusabb úgy gondolni a Bash függvények, mintha maguk is scriptek vagy segédprogramok
-lennének, mint például `cut`, `grep`, `cat`, stb. Míg C-ben a visszatérési érték többnyire arra
-szolgál, hogy egy számított értéket visszaadjon nekünk, addig itt sikert vagy hibát jelez.
+It is most practical to think of Bash functions as scripts or utilities themselves, such as
+`cut`, `grep`, `cat`, etc. While in C a return value is mostly used to return a computed value,
+here it indicates success or failure.
 
-Legegyszerűbb megérteni példákon keresztül.
+The easiest way to understand this is through examples.
 
-Bashben az alábbi módon tudunk függvényt definiálni, és meghívni:
+In Bash, we can define and call a function as follows:
 
 ```bash
 f() {
@@ -24,7 +23,7 @@ f() {
 f
 ```
 
-Az alábbi szintaxis is megengedett (tetszés kérdése):
+The following syntax is also allowed (it is a matter of preference):
 
 ```bash
 function f {
@@ -35,8 +34,7 @@ f
 # Prints Hello world! 
 ```
 
-Gondoljunk úgy a függvényre, mintha egy kisebb parancs lenne! Argumentumokat is ennek megfelelően
-adunk neki:
+Think of the function as a small command! We also pass arguments to it accordingly:
 
 ```bash
 function add_two_numbers {
@@ -47,7 +45,7 @@ add_two_numbers 10 30
 # Prints 40
 ```
 
-Változóba tudjuk tenni a kimenetét, mintha parancs lenne.
+We can store its output in a variable, just as with a command.
 
 ```bash
 function add_two_numbers {
@@ -59,8 +57,8 @@ add_two_numbers $sum 15
 # Prints 55
 ```
 
-A visszatérési értéke nem arra szolgál, hogy az eredményt adja vissza, hanem hogy hibát jelezzen.
-Például:
+Its return value is not meant to return the result, but to indicate an error.
+For example:
 
 ```bash
 function add_two_numbers {
@@ -78,8 +76,8 @@ add_two_numbers 10 20 && echo "OK" || echo "Not OK" # This succeeds
 add_two_numbers 10 e0 && echo "OK" || echo "Not OK" # This fails
 ```
 
-A visszatérési értéket megkaphatjuk a `$?` kifejezéssel is, amely mindig a legutóbb kiadott parancs
-vagy meghívott függvény visszatérési értékét adja vissza:
+We can also obtain the return value using `$?`, which always gives the return value of the most
+recent command or function call:
 
 ```bash
 function add_two_numbers {
@@ -97,11 +95,11 @@ add_two_numbers 10 e0
 echo $? # Prints 1
 ```
 
-Vegyük észre, hogy `return` utasítást használunk `exit` helyett, de ezen kívül minden ugyanolyan,
-mintha egy scriptet írnánk. Hivatkozhatunk tehát a korábbi órákon tanultakra.
+Notice that we use `return` instead of `exit`, but otherwise everything is the same as when writing
+a script. We can therefore apply what we learned in previous lessons.
 
-FONTOS: a változók láthatóságában különbség van a scriptek és a függvények között.
-Az alábbi példa futtatásával ezt jól meg tudjuk figyelni:
+IMPORTANT: variable scope differs between scripts and functions.
+We can observe this by running the following example:
 
 ```bash
 x=10
@@ -115,10 +113,10 @@ f
 f
 ```
 
-A fönti kód 11, 12, 13-at ír ki. Ha C nyelves kifejezésekkel akarunk élni, akkor az `x` változót 
-globálisnak mondhatnánk. Ha erre nem számítunk, akkor váratlan hibáink lesznek.
+The code above prints 11, 12, and 13. In C terminology, we could call the variable `x` global.
+If we do not expect this, it can lead to unexpected errors.
 
-Egy változót felüldefiniálhatunk a `declare` kulcsszóval:
+We can define a local variable that shadows another variable using the `declare` keyword:
 
 ```bash
 x=10
@@ -134,8 +132,8 @@ echo $x
 # Prints 11, then 10
 ```
 
-Vigyáznunk kell azonban a változók létrehozásakor. Az alábbi esetben `y` nem fog létezni a
-függvényen kívül:
+However, we need to be careful when creating variables. In the following case, `y` will not exist
+outside the function:
 
 ```bash
 x=10
@@ -152,7 +150,7 @@ echo $y
 # y is unset by the end
 ```
 
-Az alábbi esetben viszont már létezni fog:
+In the following case, however, it will exist:
 
 ```bash
 x=10
@@ -168,7 +166,7 @@ echo $y
 # y exists at the end, and it's 11
 ```
 
-Trükkös, ugye? A következő kód jól szemlélteti, mi áll a háttérben:
+Tricky, isn't it? The following code illustrates what is happening:
 
 ```bash
 x=10
@@ -181,12 +179,13 @@ f
 echo $x
 echo $y
 echo $z
-# y exists at the end, and it's 11
+# y is unset; z exists and is 12
 ```
 
-Az `y` lokális, a `z` pedig nem, ezért `y` kívül nem látszik, `z` viszont igen.
-A `declare` kulcsszó a függvényen belül lokális változókat fog létrehozni.
-Az alábbi kódnál két `x` fog létezni, egy belső és egy külső (lokális és globális):
+The variable `y` is local, while `z` is not, so `y` is not visible outside the function, but `z` is.
+The `declare` keyword creates local variables inside a function.
+In the following code there will be two variables named `x`, one inside and one outside the function
+(local and global):
 
 ```bash
 x=10
@@ -200,14 +199,14 @@ echo $x
 # Prints 11 and 10
 ```
 
-Most már láttuk, hogy a függvényeket hogyan lehet használni. Lássunk rájuk tényleges példákat!
+Now that we have seen how to use functions, let's look at some practical examples!
 
-## Példák
+## Examples
 
-### 1. példa
-Készítsünk egy függvényt, ami összeadja az argumentumban megadott számokat. Ha nem kap argumentumot,
-akkor 0-t ír ki, egyébként az argumentumok összegét. Az argumentumokat nem szükséges ellenőrizni,
-hogy számok-e.
+### Example 1
+Create a function that adds the numbers passed as arguments. If it receives no arguments, it should
+print 0; otherwise, it should print their sum. There is no need to check whether the arguments are
+numbers.
 
 ```bash
 #!/bin/bash
@@ -224,14 +223,14 @@ sum 10 20 30
 sum
 ```
 
-### 2. példa
-Írjunk függvényt, ami legenerál `N` darab véletlen számot egy [`x`-`y`] intervallumban. `N`, `x` és
-`y` értékeit paraméterekként kapja meg a függvény.
+### Example 2
+Write a function that generates `N` random numbers in the range [`x`-`y`]. The function receives
+`N`, `x`, and `y` as parameters.
 
-Ellenőrzések nem szükségesek a függvényen belül. Ha bármelyik paramétert nem adják meg, akkor a 
-default értékek legyenek a következők: `N=5, x=1, y=90`.
+No validation is required inside the function. If any parameter is omitted, its default value should
+be as follows: `N=5, x=1, y=90`.
 
-Generáltassunk a függvénnyel 10 véletlen számot 800 és 900 között, majd 15 számot -10 és 10 között!
+Use the function to generate 10 random numbers between 800 and 900, then 15 numbers between -10 and 10!
 
 ```bash
 #!/bin/bash
@@ -253,18 +252,17 @@ generate 10 800 900
 generate 15 -10 10
 ```
 
-## Feladatok
+## Exercises
 
-Feladatok önálló megoldásra.
+Exercises to solve independently.
 
-### 1. feladat
-Egészítsük ki a második példát úgy, hogy a generált számok egyediek legyenek, és generáltassunk
-ötös lottó nyerőszámokat!
+### Exercise 1
+Extend the second example so that the generated numbers are unique, and generate winning numbers
+for a five-number lottery!
 
-### 2. feladat
-Készítsünk egy függvényt, ami egy vektort vár, és kiírja a vektor hosszát. A vektor dimenziója a 
-bemeneti paraméterek száma. Ha nem kap bemeneti paramétert, akkor jelezzen hibát!
+### Exercise 2
+Create a function that takes a vector and prints its length. The dimension of the vector is the
+number of input parameters. If it receives no input parameters, it should report an error!
 
-Írjunk egy scriptet, ami felhasználja ezt a függvényt! A felhasználótól kérjünk be egy vektort,
-és számítsuk ki az egységvektorát (az egy hosszúságú irányvektor, tehát a vektor összes komponense
-osztva a hosszával).
+Write a script that uses this function! Ask the user for a vector and calculate its unit vector
+(the direction vector of length one, obtained by dividing each component by the vector's length).

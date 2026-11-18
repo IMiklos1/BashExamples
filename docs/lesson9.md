@@ -1,275 +1,271 @@
-# 9. óra
-Ezen a gyakorlaton elengedjük a Bash nyelv használatával kapcsolatos technikai ismereteket.
-Ehelyett megtekintünk néhány használati esetet.
+# Lesson 9
+In this practice session, we will move away from the technical details of using Bash.
+Instead, we will look at some use cases.
 
-Alapvető megállapítás (triviális), hogy egy nyelv csak annyira lehet hasznos, amennyi
-szituációban hasznát tudjuk venni. A Bash nyelvet nem számítógépes játékok vagy komplex
-grafikus alkalmazások fejlesztésére találták ki. Legjobban rendszergazdai feladatokhoz,
-egyszerű parancssori automatizálásokhoz, installációs szkriptekhez működik. Mivel az
-ilyenek hosszúra nyúlhatnak, ezek helyett összegyűjtöttem pár olyan szituációt,
-amelyekben a Bash nyelv hasznomra vált az évek során. Ezek nagyrészt rövidek lesznek.
+It is a basic (and obvious) observation that a language is only as useful as the situations
+in which we can use it. Bash was not designed for developing computer games or complex
+graphical applications. It works best for system administration, simple command-line automation,
+and installation scripts. Since those can become lengthy, I have instead collected a few situations
+in which Bash has been useful to me over the years. Most of these will be short.
 
-Az alábbiakban érdemi sorrend nélkül következnek a használati esetek.
+The use cases below are presented in no particular order.
 
-## Hasznos példák
+## Useful examples
 
-### Az `ssh` parancs
-Talán a leghasznosabbal indítottam. `ssh` = Secure Shell. Gyakori, hogy a parancssort nem 
-azon a gépen akarjuk használni, amin éppen vagyunk. Az `ssh` megengedi a távoli parancssori 
-elérést.
+### The `ssh` command
+I may have started with the most useful one. `ssh` = Secure Shell. We often want to use the
+command line on a machine other than the one we are currently using. `ssh` allows remote
+command-line access.
 
 ```bash
 ssh username@jerry.iit.uni-miskolc.hu
 ```
 
-Az alábbi parancsot kiadhatjuk akár egy Linuxos, akár egy Windowsos gép termináljában, és
-segítségével rácsatlakozunk egy távoli gépre. A távoli gép jelenleg egy szerver, ami a 
-`jerry.iit.uni-miskolc.hu` címen elérhető. A `@` elé beütjük a felhasználónevet, amivel 
-be kívánunk jelentkezni. Ezután a parancs megkérdezi, hogy elfogadjuk-e az új `ssh`
-kapcsolat fingerprintjét (beírjuk, hogy *yes*). Ezt követően be kell írnunk a jelszavunkat,
-és már kész is a távoli kapcsolat!
+We can run the command above in a terminal on either a Linux or a Windows machine to connect to
+a remote machine. In this example, the remote machine is a server available at
+`jerry.iit.uni-miskolc.hu`. Before the `@`, enter the username you want to log in with. The command
+then asks whether you accept the fingerprint of the new `ssh` connection (enter *yes*). After that,
+enter your password, and the remote connection is ready!
 
-Innentől úgy kezelhetjük a terminált, mintha ott lennénk a távoli gépen. Ha le akarunk
-csatlakozni, csak adjuk ki a `logout` parancsot!
+From then on, we can use the terminal as if we were at the remote machine. To disconnect, just
+run the `logout` command!
 
-Hasznos ez a következő esetekben:
-- A szerver messze van, de dolgoznod kell rajta. Karbantartási, rendszergazda munka, devops
-feladatok.
-- A `jerry` szerverre kell csatlakoznod, mert valami beadandót kell rajta csinálnod.
-- A szerveren nincs grafikus felület (ez gyakori). Ilyenkor egyszerűbb `ssh` parancsot
-használni, mint levinni egy monitort és billentyűzetet a szerverterembe.
-- Kis készülékre, tipikusan Raspberry PI-re telepítettél Ubuntut vagy Raspbiant, és 
-a kis kütyü már benne van egy robotban. Csatlakoznod kell, de nem akarsz monitort és 
-billentyűzetet vinni magaddal a robotra.
+This is useful in the following situations:
+- The server is far away, but you need to work on it: maintenance, system administration, or DevOps
+tasks.
+- You need to connect to the `jerry` server to work on an assignment.
+- The server has no graphical interface (which is common). In that case, using `ssh` is easier than
+taking a monitor and keyboard to the server room.
+- You installed Ubuntu or Raspbian on a small device, typically a Raspberry Pi, and the device is
+already inside a robot. You need to connect, but you do not want to carry a monitor and keyboard
+along with the robot.
 
-### Az `scp` parancs
-Emlékszünk a `cp` parancsra? Fájlok másolására szolgált. Ugyanaz az `scp` is, csak *Secure* Copy.
-Mint az `ssh` parancs, ez is gépek közötti másolásra szolgál. Ha `ssh`-val csatlakozol a 
-távoli gépre, akkor sok dolgot megtehetsz *azon* a gépen, de ha a saját gépedről akarsz
-odamásolni valamit, akkor valami egyéb parancsra van szükséged.
+### The `scp` command
+Remember the `cp` command? It was used to copy files. `scp` does the same, but stands for *Secure*
+Copy. It copies files between machines using SSH. If you connect to a remote machine with `ssh`, you
+can do many things *on that machine*, but to copy something from your own machine to it, you need
+another command.
 
-Az alábbi példa egy fájlt másol a gépemről a `jerry`-s szerverre, a saját felhasználói
-fiókomba.
+The following example copies a file from my machine to my user account on the `jerry` server.
 
 ```bash
 scp some_file.txt bolyki@jerry.iit.uni-miskolc.hu:~/foldername/
 ```
 
-Ugyanúgy jelszót kell majd beírni, mint `ssh` esetén, de a jelszó beírása után a `some_file.txt`
-nevű fájl *erről a gépről* átmásolódik *arra a gépre*. A másik gép címe után kettőspontot
-rakunk, és a kettőspont után írjuk a fájl új elérési útvonalát. A fönti esetben a `home`
-mappámban lévő `foldername` nevű mappába fog kerülni a fájl.
+As with `ssh`, you will need to enter a password, but after entering it, the file `some_file.txt`
+is copied *from this machine* to *that machine*. Put a colon after the other machine's address and
+write the file's destination path after the colon. In the example above, the file will be placed in
+the `foldername` directory inside my `home` directory.
 
-Megjegyzem, hogy az `rsync` parancs is ilyesmire szolgál, de soha nem tanultam meg a működését.
-Az `scp` egyszerű, egyértelmű, és mindenre elég volt, amire nekem kellett.
+The `rsync` command serves a similar purpose, although I never learned how to use it.
+`scp` is simple and straightforward, and it has been enough for everything I needed.
 
 ### `sudo apt install`
-Amint saját rendszert telepítesz, szemben fogod magad találni ezzel a paranccsal. Ez Ubuntun
-így néz ki, bár Arch Linuxon máshogy fog. Az `apt` az Ubuntu csomagkezelője. A hivatalos
-repository-ból tudsz csomagokat letölteni és installálni vele. Szinte minden installációs 
-tutorialban találkozni fogsz vele, úgyhogy nem ragozom tovább. Jobb, mint a next-next-finish.
+As soon as you install your own system, you will encounter this command. This is how it looks on
+Ubuntu, although it will be different on Arch Linux. `apt` is Ubuntu's package manager. You can
+use it to download and install packages from the official repository. You will encounter it in
+almost every installation tutorial, so I will not dwell on it. It is better than next-next-finish.
 
-### A `tar`, `zip` és `unzip` parancsok
-A JupyterLab szerveren jártam többször úgy, hogy nem tudtam mappát letölteni a felhasználói
-felületről. A JupyterLabbal akkor fogtok találkozni, ha neurális hálókat tanítotok fel egy 
-távoli gépen (egy erős szerveren, masszív videokártyákkal). A JupyterLabot el lehet 
-érni böngészőben, és lehet Python kódokat futtatni benne. Ennek a dokumentumnak az írásakor 
-viszont nem lehetett mappát letölteni róla. Sem feltölteni.
+### The `tar`, `zip`, and `unzip` commands
+On a JupyterLab server, I have repeatedly found that I could not download a folder through the
+user interface. You may encounter JupyterLab when training neural networks on a remote machine
+(a powerful server with substantial graphics cards). JupyterLab can be accessed in a browser and
+can run Python code. At the time this document was written, however, it was not possible to download
+or upload a folder through it.
 
-Szerencsére akad terminál is a szerveren, így lehet Bashben utasításokat adni. A megoldás az 
-volt, hogy a mappából csinálok egy *zip* fájlt, és azt töltöm le, vagy töltöm fel. Kitömöríteni
-sem lehet kattintgatással, csak terminálból.
+Fortunately, the server also has a terminal, so we can issue Bash commands. The solution was to
+make a *zip* file from the folder and download or upload that. Extracting it also had to be done
+from the terminal rather than by clicking.
 
-Gondolom mostanra mindenki kitalálta, mire jó a `tar` és az `unzip` parancs.
+By now, I imagine everyone has figured out what the `tar` and `unzip` commands are for.
 
-A `tar` parancs neve a *Tape ARchive* szavakból jön. Eredetileg szalagra írt archívumokhoz 
-találták ki. Lehet vele tömöríteni és kitömöríteni fájlokat, mappákat. Még saját fájl
-kiterjesztése is van (*tar*). A tömörített archívumokat kétszeres kiterjesztéssel szokták
-használni, `archive_name.tar.gz` szintaxissal. Egy mappát az alábbi módon tudunk tömöríteni:
+The name of the `tar` command comes from *Tape ARchive*. It was originally designed for archives
+written to tape. It can archive and extract files and folders, with optional compression. It even
+has its own file extension (*tar*). Compressed archives commonly use a double extension, as in
+`archive_name.tar.gz`. We can compress a folder as follows:
 
 ```bash
 tar cfzv archive.tar.gz foldername
 ```
 
-A létrejött archívum neve `archive.tar.gz` lesz. Kitömöríteni az alábbi módon tudjuk:
+The resulting archive will be named `archive.tar.gz`. We can extract it as follows:
 
 ```bash
 tar xfzv archive.tar.gz
 ```
 
-A `tar` parancs irodalma ennél jóval bővebb, de én 95%-ban csak ennyit használtam belőle.
-Az `xfzv` 4 darab kapcsoló összevonva, a `cfzv` szintúgy. Érdekesség, hogy melyik mit jelent:
-- x= eXtract (csomagold ki).
-- c= Compress (csomagold be).
-- f= File (a következő fájlnévvel hozd létre az archívumot).
-- z= gZip (gzip tömörítésű fájlon fog dolgozni).
-- v= Verbose ("bőbeszédű", kiírja milyen fájlokon dolgozik, miközben csomagol / kicsomagol).
+There is much more documentation on `tar`, but this is all I have used it for 95% of the time.
+Both `xfzv` and `cfzv` combine four options. Here is what each one means:
+- x= eXtract (extract the archive).
+- c= Create (create an archive).
+- f= File (use the following filename for the archive).
+- z= gZip (work with gzip compression).
+- v= Verbose (print the files being processed while archiving or extracting).
 
-A `zip` és `unzip` parancs ennek az egyszerűbb verziója, ezért szeretem jobban. Ha csak egy *zip*
-fájlt akarsz becsomagolni és kicsomagolni, akkor könnyebbet nem is kereshetnél.
+The `zip` and `unzip` commands are a simpler alternative, which is why I prefer them. If you only
+want to create and extract a *zip* file, you could hardly find anything easier.
 
 ```bash
-# Becsomagolja a my_folder mappát egy my_archive.zip fájlba
+# Pack the my_folder directory into a my_archive.zip file
 zip -r my_archive.zip my_folder # -r is for recursive
-# Kicsomagolja a my_archive.zip mappát
+# Extract my_archive.zip
 unzip my_archive.zip
 ```
 
-A `tar` parancs egy svájci bicska az archívumok készítésére, tömörítésre, kitömörítésre. A `zip` és 
-`unzip` csak annyi, amennyit a nevük mond. Nekik is vannak kapcsolóik, amikről érdemes lehet 
-olvasni, ha használod őket. A fönti példa azonban lefedi a használati esetek 95%-át (nálam).
+The `tar` command is a Swiss Army knife for creating, compressing, and extracting archives. `zip`
+and `unzip` do just what their names say. They also have options worth reading about if you use
+them. However, the example above covers 95% of my use cases.
 
-### Az `sl` parancs
-Az előző parancsok hosszúra sikerültek, ezért ez egy fellélegzős parancs lesz.
-Programozó vagy és szereted megviccelni magad? Az `sl` parancsot neked találták ki!
+### The `sl` command
+The previous commands took a while to explain, so this one is a breather.
+Are you a programmer who likes playing a joke on yourself? The `sl` command was made for you!
 
-Mi az egyik leggyakrabban beütött parancssori utasítás? Igen, az `ls`.
+What is one of the most frequently typed commands? Yes, `ls`.
 
-Mi az egyik leggyakoribb elgépelési forma? Igen, a karakterek felcserélése. Tehát `sl`.
+What is one of the most common typos? Yes, swapping characters. So, `sl`.
 
-Nem is lennél igazi mérnök, ha időről időre nem csinálnál hülyét magadból. Az `sl` parancs
-karaktergrafikusan meganimál egy elhaladó vonatot neked, valahányszor elgépeled az `ls` parancsot.
-Lehet installálnod kell, de megéri (a tanszéki gépekre az illetékes már volt kedves felrakni).
+You would not be a real engineer if you did not make a fool of yourself from time to time. The
+`sl` command animates a passing train in character graphics whenever you mistype `ls`. You may
+need to install it, but it is worth it (someone was kind enough to install it on the department's
+machines already).
 
 ```bash
 sl
 ```
 
-### A `cowsay` parancs
-Az `sl` parancs egyik ismert párja. Karaktergrafikusan kirajzol egy tehenet, ami mond neked valamit.
-Miután 3 órája szívsz egy beadandóval, bizonyára valami kedveset fog mondani.
+### The `cowsay` command
+A well-known companion to `sl`. It draws a cow in character graphics that says something to you.
+After struggling with an assignment for three hours, it will surely have something nice to say.
 
 ```bash
 cowsay "You suck."
 ```
 
-### A `history` parancs
-Most térjünk vissza pár olyan parancsra, amik tényleg hasznosak. A `history` parancs már mentette 
-meg párszor az életemet. Remélem a félév végére már rájöttél, hogy a terminálban, ha fölfelé 
-nyilat nyomsz, akkor az előző parancsokon tudsz végiggörgetni. Mi van, ha hirtelen szükséged
-lesz arra a parancsra, amit 200 paranccsal ezelőtt ütöttél be? Nagyon hosszú parancs volt, nem 
-emlékszel a paraméterlistájára, de tudod, hogy például `gcc`-vel kezdődött.
+### The `history` command
+Now let's return to some commands that are genuinely useful. The `history` command has saved my
+life a few times. Hopefully, by the end of the semester you have discovered that pressing the up
+arrow in the terminal lets you scroll through previous commands. But what if you suddenly need a
+command you typed 200 commands ago? It was very long, and you cannot remember its parameter list,
+but you know, for example, that it started with `gcc`.
 
-A `history` parancs siet a segítségedre. Kiírja neked az adott terminálhoz tartozó korábban kiadott
-parancsok listáját. Kombináld a `grep` paranccsal, hogy még kevesebbet kelljen szívnod vele!
+The `history` command comes to the rescue. It prints a list of commands previously issued in the
+terminal. Combine it with `grep` to make the search even easier!
 
 ```bash
 history | grep "gcc"
 ```
 
-### A `kill` és a `ps` parancs
-Nem vagy programozó, ha még nem rontottál el semmit. Időnként annyira el lehet rontani, hogy
-le se tudod lőni a sz*r programot, amit indítottál. A terminálos programokat általában meg lehet 
-ölni `Ctrl+C`-vel. Létezhet viszont olyan eset, amikor egyenesen meg kell ölnöd egy programot a
-PID-je (Process Id) alapján.
+### The `kill` and `ps` commands
+You are not a programmer if you have never broken anything. Sometimes you can break something so
+badly that you cannot even stop the lousy program you started. Terminal programs can usually be
+terminated with `Ctrl+C`. Sometimes, however, you need to kill a program using its PID (Process ID).
 
-Először meg kell találnod a parancs PID-jét. Többek között erre jó a `ps`. Add ki a következő 
-kapcsolókkal, hogy mindent is láss!
+First, you need to find the program's PID. This is one of the things `ps` is useful for. Run it
+with the following options to see everything!
 
 ```bash
 ps awux
 ```
 
-Üdv a Linuxos parancskezelőben! A gépen futó összes programot láthatod. Több ezer van. Használd a
-`grep`-et, hogy rátalálj a saját programodra.
+Welcome to Linux process management! You can see all the programs running on the machine. There
+are thousands of them. Use `grep` to find your own program.
 
 ```bash
 ps awux | grep "my_crazy_program"
 ```
 
-Bal szélen az a felhasználó van, akinek a jogaival fut a program. A saját felhasználónevedet és a 
-`root` felhasználót biztosan látni fogod. A következő oszlopban a PID van. A PID alapján le tudsz
-állítani egy programot erőszakkal.
+On the far left is the user whose privileges the program runs with. You will surely see your own
+username and the `root` user. The next column contains the PID. You can use the PID to forcibly
+stop a program.
 
 ```bash
 kill -9 10234
 ```
 
-A fönti parancs leállítja a 10234-es PID-del rendelkező futó programot (processzt). OS-ből erről
-többet fogtok tanulni, de megjegyeznék itt valamit:
+The command above stops the running program (process) with PID 10234. You will learn more about
+this in Operating Systems, but I would like to mention something here:
 
-**Megjegyzés:** A `kill` parancs neve becsapós. Nem programok leállítására szolgál, hanem arra, hogy 
-jelet küldjünk nekik. A 9-es jel a SIGKILL, tehát az **azonnali** leállításra vonatkozó jel. Ha
-másféle jelet
-küldünk, akkor a program másként reagál. Például ha lenyomjuk a `Ctrl+C` billentyűket, akkor 
-is jelet küldünk, csak egy másikat, a SIGINT parancsot (Interrupt). Általában ez is megöli a
-programot, de SIGKILL egészen biztosan.
+**Note:** The name of the `kill` command is misleading. It is used to send signals to programs,
+not just to stop them. Signal 9 is SIGKILL, the signal for **immediate** termination. If we send
+a different signal, the program responds differently. For example, pressing `Ctrl+C` also sends
+a signal, but a different one: SIGINT (Interrupt). This usually terminates the program too, but
+SIGKILL is certain to do so.
 
-**Még egy megjegyzés:** Gondolom mondanom sem kell, hogy ha elkezdünk ész nélkül programokat 
-öldösni a rendszerünkben, akkor az valószínűleg hibákhoz fog vezetni.
+**Another note:** It probably goes without saying that indiscriminately killing programs on our
+system is likely to cause errors.
 
-### A `gcc` parancs
-Van olyan eset, főleg Linux alatt, főleg az OS tantárgy gyakorlatán, hogy terminálban kell C
-programokat fordítani és futtatni. A C fordító a legtöbb Linux rendszeren a `gcc` lesz.
+### The `gcc` command
+Sometimes, especially on Linux and in Operating Systems practice sessions, you need to compile and
+run C programs in a terminal. On most Linux systems, the C compiler will be `gcc`.
 
-Ha van egy egyfájlos C kódod, amit le akarsz fordítani és futtatni, akkor megteheted a következőt:
+If you have a single-file C program that you want to compile and run, you can do the following:
 
 ```bash
 gcc my_prog.c -o my_prog # compile
 ./my_prog # run
 ```
 
-Nyilván nagy programoknál nem javaslom ezt a módszert, de kicsiknél elég ennyi is. Ha külső
-könyvtárat használsz a programodban, akkor azt esetleg linkelned kell:
+Obviously, I do not recommend this method for large programs, but it is enough for small ones.
+If you use an external library in your program, you may need to link it:
 
 ```bash
 gcc my_prog.c -o my_prog -lSDL # compile
 ./my_prog # run
 ```
 
-Az SDL (vagyis inkább SDL2) egy videojáték készítéshez jól használható könyvtár (alacsony szintű,
-ezért programozni vágyóknak ajánlom).
+SDL (or rather SDL2) is a useful library for making video games. It is low-level, so I recommend
+it to those who want to do some programming.
 
-### A `cloc` parancs
-Benne vagy egy nagy saját projektben vagy beadandóban? Írod már egy hete, és kíváncsi lettél, hogy 
-mégis mennyit írtál eddig? Kíváncsi lettél, hány soros a kódod, mennyivel dicsekedhetsz el?
+### The `cloc` command
+Are you working on a large personal project or assignment? Have you been writing it for a week and
+wondered how much you have written so far? Curious how many lines your code has and how much you
+can brag about?
 
-A `cloc` parancs (Count Lines Of Code) Linux alatt egy könnyen installálható kis utility.
+The `cloc` command (Count Lines Of Code) is a small utility that is easy to install on Linux.
 
 ```bash
 cloc src
 ```
 
-A fönti parancs megszámolja az `src` mappában lévő kódsorok számát, nyelv szerint.
+The command above counts the lines of code in the `src` directory by language.
 
-### Egyebek
-A legtöbb programnak, programnyelvnek, keretrendszernek, amit használni fogtok az egyetem és a 
-munka során, van valamilyen parancssori interfésze (CLI - Command Line Interfész). Tipikus példa a 
-`git`. Én szeretem a parancssori `git`-et, más kevésbé. De itt nem áll meg a sor. Csak néhány
-parancssori felület, amit használnom kellett:
-- `gcc` a C nyelvhez.
-- `g++` a C++ nyelvhez.
-- `java` és `javac` a Java nyelvhez.
-- `node`, `npm`, `ng` a webfejlesztéshez (Node szerver, Node csomagmenedzser, Angular CLI).
-- `docker` a virtuális gépek menedzseléséhez. Itt is előjött az, hogy meg kellett találni a virtuális
-gépek azonosítóit, majd le kellett lőni őket, esetleg törölni és újragenerálni őket. Sokat segített
-a `grep` parancs.
-- `cmake` a komplexebb C, C++ projektek buildeléséhez és installálásához.
+### Other tools
+Most programs, programming languages, and frameworks you will use at university and at work have
+some kind of command-line interface (CLI). A typical example is `git`. I like command-line `git`;
+others like it less. But the list does not end there. Here are just a few command-line tools I
+have had to use:
+- `gcc` for C.
+- `g++` for C++.
+- `java` and `javac` for Java.
+- `node`, `npm`, `ng` for web development (Node server, Node package manager, Angular CLI).
+- `docker` for managing virtual machines. Here too, I have had to find their IDs and stop them,
+or perhaps remove and recreate them. The `grep` command helped a lot.
+- `cmake` for building and installing more complex C and C++ projects.
 
-Ezekkel vagy fogtok találkozni, vagy nem, de jó tudnotok, hogy a command line nem ér véget
-Számítógépi Architektúrák tantárggyal.
+You may or may not encounter these, but it is good to know that the command line does not end
+with the Computer Architectures course.
 
-## Parancsok, amik segíthetnek a beadandóban
+## Commands that may help with the assignment
 
-### A `w` és a `who` parancs
-Arra valók, hogy adatokat tudjunk meg az épp bejelentkezett felhasználókról, legutóbbi belépésükről,
-stb. Vannak olyan beadandó feladatok, amik ezekre építenek.
+### The `w` and `who` commands
+These provide information about currently logged-in users, their login times, and so on. Some
+assignment tasks are based on them.
 
-### A `read` parancs kapcsolói
-Akadnak játékok is a beadandók között. Bár alapesetben nem javasolnám, hogy bárki Bashben készítsen
-játékot, de a beadandó talán izgalmasabb és élvezetesebb, ha nem egy APEH szimulátort írtok, hanem
-egy Pongot. Egy valós idejű játéknál (ami nem körökre osztott, mint az amőba), jól jöhet a `read`
-parancs `-t` kapcsolója. Ez egy *timeout*-ot ad a parancshoz, vagyis ha nem ütsz le semmit, akkor 
-program folytatódik. Mint egy játékban.
+### Options for the `read` command
+Some assignments involve games. Although I would not normally recommend making a game in Bash, the
+assignment may be more exciting and enjoyable if you write Pong rather than a tax office simulator.
+In a real-time game (one that is not turn-based, like tic-tac-toe), the `-t` option of the `read`
+command can be useful. It adds a *timeout* to the command, so the program continues even if you
+do not press anything. Just like in a game.
 
-Ezenfelül jól jöhet az is, hogy a `read` parancsnak megadható, hogy csak egy karaktert várjon.
-Egy billetyűlenyomást pont elég egyszerre kezelni. Ha olyan játékot akarsz írni, ahol egyszerre 
-több billentyű kell, akkor tényleg keres másik programnyelvet.
+It can also be useful to tell `read` to wait for only one character. Handling one keypress at a
+time is enough. If you want to write a game that needs multiple keys at once, you really should
+look for another programming language.
 
-A `read` parancsot el is lehet hallgattatni az `-s` kapcsolóval (így ha leütsz valamit, akkor 
-az nem fog megjelenni a terminálban).
+You can also silence `read` with the `-s` option (so anything you type will not appear in the
+terminal).
 
-Egy példa a használatára:
+Here is an example of its use:
 
 ```bash
 playing=1
@@ -291,6 +287,6 @@ done
 echo "Game over"
 ```
 
-A fönti példában a `read` parancs egy karaktert vár, és 0.1 másodperc után továbblép, ha addig
-nem érkezik felhasználói input. Az `-s` kapcsoló miatt a felhasználói input nem kerül ki a terminálra.
-Erre az alapra ráírhatod a Pongot, vagy bármi egyéb egyszerű, karaktergrafikus játékot.
+In the example above, `read` waits for one character and moves on after 0.1 seconds if no user input
+has arrived by then. The `-s` option prevents the input from being displayed in the terminal. You
+can use this as a basis for Pong or any other simple character-graphics game.
